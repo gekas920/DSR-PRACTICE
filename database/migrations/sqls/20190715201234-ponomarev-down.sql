@@ -1,2 +1,3 @@
 /* Replace with your SQL commands */
-DROP TABLE "equipment";
+DROP TABLE `ponomarev`.`equipment`;
+DROP TABLE `ponomarev`.`users`;

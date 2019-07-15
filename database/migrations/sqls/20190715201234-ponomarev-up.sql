@@ -18,3 +18,7 @@ CREATE TABLE `ponomarev`.`users` (
   `admin` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `login_UNIQUE` (`login` ASC) VISIBLE);
+
+  insert into `ponomarev`.`equipment` (name,availability,owner) values ('ball',false,'Nick');
+  insert into `ponomarev`.`equipment` (name,availability,owner) values ('table',true,'User');
+  insert into `ponomarev`.`equipment` (name,availability,owner) values ('pencil',false,'Vasya');
