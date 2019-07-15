@@ -114,7 +114,7 @@ class Form extends React.Component{
             })
         }
         else {
-            if((this.state.password === this.state.confirm) && this.state.password.length > 5){
+            if((this.state.password === this.state.confirm) && this.state.password.length > 4){
                 this.setState({
                     login:document.getElementById('login').value,
                     email:document.getElementById('email').value,
@@ -139,8 +139,14 @@ class Form extends React.Component{
 
 
     render() {
-        const inputs = [<Input text='confirm' type='password' onChange={this.handleChange}/>,<Input text="email"/>,<Input text="name"/>,<Input text="phone" type='phone'/>
-        ,<Input text="date"/>,<Input type='file'/>];
+        const inputs = <div>
+            <Input text='confirm' type='password' onChange={this.handleChange}/>
+            <Input text="email" type=""/>
+            <Input text="name" type=""/>
+            <Input text="phone"/>
+            <Input text="date" type=""/>
+            <Input type='file' text="file"/>
+        </div>;
         if(this.state.send){
             return (
                 <Redirect to="/home"/>
@@ -148,20 +154,20 @@ class Form extends React.Component{
         }
         else return(
             <div>
-                <cont className="form-block">
-                    <logo>SuperApp</logo>
-                    <Input text = 'login'/>
+                <div className="form-block">
+                    <div className="logo">SuperApp</div>
+                    <Input text = 'login' type=''/>
                     <Input text = 'password' type='password' onChange={this.handleChange}/>
-                    <short className = 'short' id = 'shorts'>password too short</short>
+                    <div className = 'short' id = 'shorts'>password too short</div>
                     <Fab variant="extended" aria-label="Delete" className={classes.fab} style={Object.assign({},styles,this.state.visibility ? {textAlign:'center'} : {display:'none'})} onClick={this.accessConfirm}>
                         Login
                     </Fab>
-                    <other style = {!this.state.visibility ? {display:'block'} : {display:'none'}}>{inputs}</other>
-                    <wrong style = {!this.state.conf ? {display:'block'} : {display:'none'}}>Incorrect passwords</wrong>
+                    <div style = {!this.state.visibility ? {display:'block'} : {display:'none'}}>{inputs}</div>
+                    <div style = {!this.state.conf ? {display:'block'} : {display:'none'}}>Incorrect passwords</div>
                     <Fab variant="extended" aria-label="Delete" className={classes.fab} style={styles} onClick={this.handleClick}>
                         Sign in
                     </Fab>
-                </cont>
+                </div>
             </div>)
     }
 }
