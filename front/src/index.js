@@ -2,9 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import Content from './Components/Routes'
+import MaterialTableDemo from "./Components/Catalog/Table";
 
 
-ReactDOM.render(<Content/>, document.getElementById('root'));
+ReactDOM.render(<MaterialTableDemo/>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

@@ -24,7 +24,7 @@ body {
     padding-left: 10px;
 }
 .input-form.back{
-    background-color: red;
+    background-color: #ffd432;
 }
 
 logo{
@@ -33,22 +33,16 @@ logo{
     font-size: 45px;
     margin: 25px 0 30px 0;
 }
-login,sign{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 200px;
-    height: 40px;
-    background-color: #ffd432;
-    margin: 30px auto 0;
-    border-radius: 20px;
+
+.short{
+    margin-top: 5px;
+    display: none;
+    color: #000000;
+    font-size: 12px;
+}
+.short.disp{
+    display: inline-block;
 }
 
-sign{
-    margin-bottom: 20px;
-}
 
-login,sign:hover{
-    cursor: pointer;
-}
 

@@ -2,8 +2,31 @@ import React from 'react'
 import './Form.css'
 import {Redirect} from "react-router-dom";
 import * as crud from '../Requests/requests'
-import {makeStyles} from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import {withStyles} from "@material-ui/styles";
+import Fab from '@material-ui/core/Fab';
+
+
+
+
+const styles = {
+    width: '200px',
+    height: '40px',
+    backgroundColor:'#ffd432',
+    fontFamily: 'Arial, monospace',
+    fontWeight: 'bold',
+    marginTop: '30px'
+};
+
+const classes = makeStyles(theme => ({
+    fab: {
+        margin: theme.spacing(1),
+    },
+    extendedIcon: {
+        marginRight: theme.spacing(1),
+    },
+}));
+
 
 
 function Input({text,type,onChange}) {
@@ -60,12 +83,19 @@ class Form extends React.Component{
             password:document.getElementById('password').value,
             confirm:document.getElementById('confirm').value
         },function () {
-            if(this.state.password !== this.state.confirm){
+            if((this.state.password !== this.state.confirm && !this.state.visibility)){
+                if(this.state.password.length < 5) {
+                    document.getElementById('shorts').classList.add('disp');
+                }
+                else {
+                    document.getElementById('shorts').classList.remove('disp')
+                }
                 document.getElementById('confirm').classList.add('back');
             }
-            else {
+            else{
                 document.getElementById('confirm').classList.remove('back');
             }
+
         });
     }
 
@@ -84,7 +114,7 @@ class Form extends React.Component{
             })
         }
         else {
-            if(this.state.password === this.state.confirm){
+            if((this.state.password === this.state.confirm) && this.state.password.length > 5){
                 this.setState({
                     login:document.getElementById('login').value,
                     email:document.getElementById('email').value,
@@ -109,7 +139,7 @@ class Form extends React.Component{
 
 
     render() {
-        const inputs = [<Input text='confirm' onChange={this.handleChange}/>,<Input text="email"/>,<Input text="name"/>,<Input text="phone" type='phone'/>
+        const inputs = [<Input text='confirm' type='password' onChange={this.handleChange}/>,<Input text="email"/>,<Input text="name"/>,<Input text="phone" type='phone'/>
         ,<Input text="date"/>,<Input type='file'/>];
         if(this.state.send){
             return (
@@ -122,16 +152,20 @@ class Form extends React.Component{
                     <logo>SuperApp</logo>
                     <Input text = 'login'/>
                     <Input text = 'password' type='password' onChange={this.handleChange}/>
-                    <login style = {this.state.visibility ? {display:'flex'} : {display:'none'}} onClick = {this.accessConfirm}>Login</login>
+                    <short className = 'short' id = 'shorts'>password too short</short>
+                    <Fab variant="extended" aria-label="Delete" className={classes.fab} style={Object.assign({},styles,this.state.visibility ? {textAlign:'center'} : {display:'none'})} onClick={this.accessConfirm}>
+                        Login
+                    </Fab>
                     <other style = {!this.state.visibility ? {display:'block'} : {display:'none'}}>{inputs}</other>
                     <wrong style = {!this.state.conf ? {display:'block'} : {display:'none'}}>Incorrect passwords</wrong>
-                    <sign onClick = {this.handleClick}>Sign In</sign>
+                    <Fab variant="extended" aria-label="Delete" className={classes.fab} style={styles} onClick={this.handleClick}>
+                        Sign in
+                    </Fab>
                 </cont>
             </div>)
     }
 }
 
 
-export default  withStyles(style)(Form)
-
+export default withStyles(style)(Form)
 

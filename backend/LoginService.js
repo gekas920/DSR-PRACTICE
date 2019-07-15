@@ -18,12 +18,15 @@ con.connect(function(err) {
 
 function AddUser(user,response) {
         con.beginTransaction(function () {
-        var sql = `INSERT INTO users (login, password, email, name, phone, date, admin) VALUES ("${user.login}","${user.password}","${user.email}","${user.name}","${user.phone}","${user.date}","${0}")`;
-        con.query(sql, function (err, result) {
+            const sql = `INSERT INTO users (login, password, email, name, phone, date, admin) VALUES ("${user.login}","${user.password}","${user.email}","${user.name}","${user.phone}","${user.date}","${0}")`;
+            con.query(sql, function (err, result) {
             if (err)
-                console.log("[mysql error]",err);
-            response.send({id:result.insertId});
-        });
+            {
+                response.status(409).end();
+            }
+            else {
+                response.send({id:result.insertId});
+            }});
     });
 }
 

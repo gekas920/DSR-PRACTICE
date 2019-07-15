@@ -22,14 +22,15 @@ axios.defaults.baseURL = 'http://localhost:3000';
         });
 }
 
- export function get(url) {
-    axios.get(url)
+ export async function get(url) {
+     let exp = await axios.get(url)
         .then(function (response) {
-            console.log(response);
+            return response
         })
         .catch(function (error) {
             console.log(error);
         });
+    return exp;
 }
 
  export function remove() {
