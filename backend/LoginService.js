@@ -1,25 +1,14 @@
 
 
-var mysql = require('mysql');
+var connect = require('./Connection');
 
 
-var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "qwerty",
-    database:"users"
-});
-
-con.connect(function(err) {
-    if (err)
-        console.log();
-});
 
 
 function AddUser(user,response) {
-        con.beginTransaction(function () {
+        connect.connection.beginTransaction(function () {
             const sql = `INSERT INTO users (login, password, email, name, phone, date, admin) VALUES ("${user.login}","${user.password}","${user.email}","${user.name}","${user.phone}","${user.date}","${0}")`;
-            con.query(sql, function (err, result) {
+            connect.connection.query(sql, function (err, result) {
             if (err)
             {
                 response.status(409).end();
@@ -32,9 +21,9 @@ function AddUser(user,response) {
 
 
 function LogUser(user,response){
-    con.beginTransaction(function () {
+    connect.connection.beginTransaction(function () {
         var sql = `SELECT * FROM users WHERE login = "${user.login}"`;
-        con.query(sql, function (err, result) {
+        connect.connection.query(sql, function (err, result) {
             if (err){
                 response.status(500).end();
                 return;
