@@ -1,0 +1,12 @@
+.info{
+    color: white;
+    display: flex;
+    font-size: 35px;
+    width: 400px;
+    margin: 50px auto 0;
+}
+
+.transition{
+    text-align: center;
+    margin-bottom: -10px;
+}

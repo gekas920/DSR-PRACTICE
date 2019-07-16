@@ -31,6 +31,7 @@ class MaterialTableDemo extends React.Component{
         this.setState({
             open: true,
         });
+        console.log(rowData);
     };
 
     handleClose = () => {
