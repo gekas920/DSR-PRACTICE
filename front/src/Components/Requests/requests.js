@@ -12,15 +12,15 @@ const instance = axios.create({
 
 
 
-export function setToken(token) {
-    instance.headers.Authorization = token;
-}
-
 
 export const securedApi = '/api';
 
- export function create(url,body) {
-   const cnt =  instance.put(url,body)
+ export function create(url,body,config) {
+     const token = localStorage.getItem('token');
+     const defConf = {headers: {
+         'Authorization': token ? token : ''
+         }};
+   const cnt =  instance.put(url,body,Object.assign({},config,defConf))
         .then(function (response) {
             return response
         })
@@ -30,8 +30,12 @@ export const securedApi = '/api';
    return cnt;
 }
 
- export function update(url,body) {
-   const cnt = instance.post(url,body)
+ export function update(url,body,config) {
+     const token = localStorage.getItem('token');
+     const defConf = {headers: {
+             'Authorization': token ? token : ''
+         }};
+   const cnt = instance.post(url,body,Object.assign({},config,defConf))
         .then(function (response) {
             return response
         })
@@ -41,8 +45,13 @@ export const securedApi = '/api';
    return cnt;
 }
 
- export async function get(url,params) {
-     let exp = await instance.get(url,params)
+ export async function get(url,config) {
+     const token = localStorage.getItem('token');
+     console.log(token);
+     const defConf = {headers: {
+             'Authorization': token ? token : ''
+         }};
+     let exp = await instance.get(securedApi + url,Object.assign({},config,defConf))
         .then(function (response) {
             return response
         })
@@ -52,8 +61,12 @@ export const securedApi = '/api';
     return exp;
 }
 
- export function remove() {
-    instance.delete('/')
+ export function remove(config) {
+     const token = localStorage.getItem('token');
+     const defConf = {headers: {
+             'Authorization': token ? token : ''
+         }};
+    instance.delete('/',Object.assign({},config,defConf))
         .then(function (response) {
         })
         .catch(function (error) {

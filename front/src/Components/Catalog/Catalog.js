@@ -25,7 +25,8 @@ class MaterialTableDemo extends React.Component{
     }
 
     componentWillMount() {
-       crud.get(crud.securedApi + '/equipment').then(result => {
+       crud.get('/equipment').then(result => {
+           console.log(result);
            this.setState({data: result.data})
        });
     }

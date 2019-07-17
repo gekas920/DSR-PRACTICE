@@ -75,7 +75,7 @@ class Form extends React.Component{
         crud.update('/login',user).catch(err=>{
             localStorage.removeItem('token');
         });
-        console.log(this.state);
+        this.setState({send:true});
     }
 
 
@@ -88,9 +88,10 @@ class Form extends React.Component{
         }
         else {
             crud.create('/',this.state).then(result=>{
-                localStorage.setItem('token',result);
-                crud.setToken(result);
+                localStorage.setItem('token',result.data);
+                console.log(result);
             });
+            this.setState({send:true});
         }
     }
 

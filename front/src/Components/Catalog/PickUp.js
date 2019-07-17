@@ -59,7 +59,9 @@ class PickUp extends React.Component{
 
     componentWillMount() {
         const par = this.state.name;
-        crud.get('/equipmentPick',{params:{name:par}}).then(result=>this.setState({
+        crud.get('/equipmentPick',{params:{name:par}}).then(result=>{
+            console.log(result);
+            this.setState({
             owner:result.data.owner,
             lastOwner:result.data.lastOwner,
             currentPrice:result.data.currentPrice,
@@ -70,7 +72,7 @@ class PickUp extends React.Component{
             availability:result.data.availability
         },function () {
             console.log(result);
-        }))
+        })})
     }
 
     field(info){
