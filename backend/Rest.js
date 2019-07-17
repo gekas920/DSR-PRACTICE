@@ -5,7 +5,8 @@ const bodyParser = require("body-parser");
 var service = require('./LoginService');
 var equip = require('./EquipService');
 
-
+const securedApi = '/api';
+const authHeader = 'Authorization';
 
 
 app.use(cors());
@@ -23,9 +24,19 @@ app.put('/',(req,res) => {
     service.AddUser(user,res);
 });
 
-app.get('/equipment',(request,response)=>{
+
+app.use(securedApi, function (req, res, next) {
+    service.check(req.headers.authorization,res,next);
+});
+
+app.get(securedApi + '/equipment',(request,response)=>{
    equip.ShowEquip(request,response);
 });
+
+app.get(securedApi + '/equipmentPick',(request,response)=>{
+   equip.ShowPicked(request,response,request.query.name);
+});
+
 
 app.post('/login',(request,response)=>{
    service.LogUser(request.body,response);

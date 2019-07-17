@@ -1,20 +1,43 @@
+const connect = require('./Connection');
+const bcrypt = require('bcrypt');
+const jwt = require('jwt-simple');
+const salt = bcrypt.genSaltSync(10);
 
 
-var connect = require('./Connection');
+var secret = 'VSU';
 
 
+function checkToken(token,response,next) {
+    try {
+        var json = jwt.decode(token, secret);
+    }
+    catch (e) {
+        response.status(456).end();
+        return;
+    }
+    var sql = `SELECT * FROM users WHERE id = ? `;
+    connect.connection.query(sql, json.id, function (err, result) {
+        if (err || result.length === 0) {
+            response.status(457).end();
+        }
+        next();
+    })
+
+}
 
 
-function AddUser(user,response) {
+function AddUser(user,response){
+    var hash = bcrypt.hashSync(user.password, salt);
         connect.connection.beginTransaction(function () {
-            const sql = `INSERT INTO users (login, password, email, name, phone, date, admin) VALUES ("${user.login}","${user.password}","${user.email}","${user.name}","${user.phone}","${user.date}","${0}")`;
+            const sql = `INSERT INTO users (login, password, email, name, phone, date, admin) VALUES ("${user.login}","${hash}","${user.email}","${user.name}","${user.phone}","${user.date}","${0}")`;
             connect.connection.query(sql, function (err, result) {
             if (err)
             {
                 response.status(409).end();
             }
             else {
-                response.send({id:result.insertId});
+                const token = jwt.encode({id:result.insertId}, secret);
+                response.send(token);
             }});
     });
 }
@@ -36,23 +59,39 @@ function LogUser(user,response){
                     response.status(535).end();
                     return;
                 }
-                response.send({id: result[0].id, password: result[0].password});
-                }
+                response.send('hin');
+            }
         });
 
     })
 }
 
 
+
 /**
  * @return {boolean}
  */
 function CheckPass(hash,password){
-    return hash === password;
+    return hash === bcrypt.hashSync(password, salt);
 }
 
 
 module.exports.LogUser = LogUser;
 module.exports.AddUser = AddUser;
+module.exports.check = checkToken;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

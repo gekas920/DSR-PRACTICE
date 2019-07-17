@@ -1,11 +1,10 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import {withStyles} from "@material-ui/styles";
 import Grid from '@material-ui/core/Grid';
 import './UserStyles.css'
 import Fab from "@material-ui/core/Fab";
-import * as crud from '../Requests/requests'
 
 const styleInput = {
     width:'400px',
@@ -90,6 +89,7 @@ class User extends React.Component{
             this.setState({show:true});
         }
         else {
+            console.log(this.state);
             this.setState({show:false});
         }
     }

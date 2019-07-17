@@ -2,11 +2,9 @@ import React from 'react'
 import './Form.css'
 import {Redirect} from "react-router-dom";
 import * as crud from '../Requests/requests'
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import {withStyles} from "@material-ui/styles";
 import Fab from '@material-ui/core/Fab';
-
-
 
 
 const styles = {
@@ -29,11 +27,7 @@ const classes = makeStyles(theme => ({
 
 
 
-function Input({text,type,onChange}) {
-    return(
-        <input type={type ? type : text} className="input-form" placeholder = {text} id = {text} onChange={onChange}/>
-    )
-}
+
 
 const style = makeStyles(theme=>({
     extendedIcon: {
@@ -54,49 +48,34 @@ class Form extends React.Component{
             phone:'',
             date:'',
             visibility:true,
-            conf:true,
-            send:false
+            send:false,
         };
         this.handleClick = this.handleClick.bind(this);
-        this.handleChange = this.handleChange.bind(this);
         this.accessConfirm = this.accessConfirm.bind(this);
+        this.passwordChange = this.passwordChange.bind(this);
+        this.dateChange = this.dateChange.bind(this);
+        this.emailChange = this.emailChange.bind(this);
+        this.loginChange = this.loginChange.bind(this);
+        this.phoneChange = this.phoneChange.bind(this);
+        this.nameChange = this.nameChange.bind(this);
+        this.confirmChange = this.confirmChange.bind(this);
+        this.isEqual = this.isEqual.bind(this);
 
     }
 
-    accessConfirm(){
-        this.setState({
-            login: document.getElementById('login').value,
-            password: document.getElementById('password').value,
-            send:true
-        },function () {
-            const info = {
-                login:this.state.login,
-                password:this.state.password
-            };
-            crud.update('/login',info);
-        });
+    isEqual(){
+        return this.state.password === this.state.confirm
     }
 
-
-    handleChange(){
-        this.setState({
-            password:document.getElementById('password').value,
-            confirm:document.getElementById('confirm').value
-        },function () {
-            if((this.state.password !== this.state.confirm && !this.state.visibility)){
-                if(this.state.password.length < 5) {
-                    document.getElementById('shorts').classList.add('disp');
-                }
-                else {
-                    document.getElementById('shorts').classList.remove('disp')
-                }
-                document.getElementById('confirm').classList.add('back');
-            }
-            else{
-                document.getElementById('confirm').classList.remove('back');
-            }
-
+    accessConfirm() {
+        const user = {
+            login:this.state.login,
+            password:this.state.password
+        };
+        crud.update('/login',user).catch(err=>{
+            localStorage.removeItem('token');
         });
+        console.log(this.state);
     }
 
 
@@ -104,48 +83,27 @@ class Form extends React.Component{
     handleClick(){
         if(this.state.visibility){
             this.setState({
-                login:'',
-                password:'',
-                email:'',
-                name:'',
-                phone:'',
-                date:'',
                 visibility:false
             })
         }
         else {
-            if((this.state.password === this.state.confirm) && this.state.password.length > 4){
-                this.setState({
-                    login:document.getElementById('login').value,
-                    email:document.getElementById('email').value,
-                    name:document.getElementById('name').value,
-                    phone:document.getElementById('phone').value,
-                    date:document.getElementById('date').value,
-                    visibility:true,
-                    conf:true,
-                    send:true
-                },function () {
-                    crud.create('/',this.state);
-                });
-            }
-            else {
-                this.setState({
-                    conf:false
-                })
-            }
+            crud.create('/',this.state).then(result=>{
+                localStorage.setItem('token',result);
+                crud.setToken(result);
+            });
         }
-
     }
 
 
     render() {
         const inputs = <div>
-            <Input text='confirm' type='password' onChange={this.handleChange}/>
-            <Input text="email" type=""/>
-            <Input text="name" type=""/>
-            <Input text="phone"/>
-            <Input text="date" type=""/>
-            <Input type='file' text="file"/>
+            <input placeholder='confirm' onChange={this.confirmChange} type='password' value={this.state.confirm}
+                   className={this.isEqual() ? 'input-form' : 'input-form-back'}/>
+            <input placeholder="email"  onChange={this.emailChange} value={this.state.email} />
+            <input placeholder="name"  onChange={this.nameChange} value={this.state.name}/>
+            <input placeholder="phone" onChange={this.phoneChange} value={this.state.phone}/>
+            <input placeholder="date" onChange={this.dateChange} value={this.state.date} type='date'/>
+            <input type='file' placeholder="file"/>
         </div>;
         if(this.state.send){
             return (
@@ -156,21 +114,44 @@ class Form extends React.Component{
             <div>
                 <div className="form-block">
                     <div className="logo">SuperApp</div>
-                    <Input text = 'login' type=''/>
-                    <Input text = 'password' type='password' onChange={this.handleChange}/>
+                    <input placeholder = 'login' onChange={this.loginChange} value={this.state.login}/>
+                    <input placeholder = 'password' type='password' onChange={this.passwordChange} value={this.state.password}/>
                     <div className = 'short' id = 'shorts'>password too short</div>
-                    <Fab variant="extended" aria-label="Delete" className={classes.fab} style={Object.assign({},styles,this.state.visibility ? {textAlign:'center'} : {display:'none'})} onClick={this.accessConfirm}>
+                    <Fab variant="extended" aria-label="Delete" className={classes.fab}
+                         style={Object.assign({},styles,this.state.visibility ? {textAlign:'center'} : {display:'none'})} onClick={this.accessConfirm}>
                         Login
                     </Fab>
                     <div style = {!this.state.visibility ? {display:'block'} : {display:'none'}}>{inputs}</div>
-                    <div style = {!this.state.conf ? {display:'block'} : {display:'none'}}>Incorrect passwords</div>
                     <Fab variant="extended" aria-label="Delete" className={classes.fab} style={styles} onClick={this.handleClick}>
                         Sign in
                     </Fab>
                 </div>
             </div>)
     }
+    passwordChange(event) {
+        this.setState({password: event.target.value});
+    }
+    loginChange(event) {
+        this.setState({login: event.target.value});
+    }
+    emailChange(event) {
+        this.setState({email: event.target.value});
+    }
+    phoneChange(event) {
+        this.setState({phone: event.target.value});
+    }
+    nameChange(event) {
+        this.setState({name: event.target.value});
+    }
+    dateChange(event) {
+        this.setState({date: event.target.value});
+    }
+    confirmChange(event){
+        this.setState({confirm:event.target.value});
+    }
 }
+
+//<div style = {!this.state.conf ? {display:'block'} : {display:'none'}}>Incorrect passwords</div>
 
 
 export default withStyles(style)(Form)

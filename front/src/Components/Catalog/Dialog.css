@@ -1,0 +1,24 @@
+.diag{
+    font-family: Arial, monospace;
+    font-weight: bold;
+    width: 400px;
+    background-color: #c5d3f3;
+}
+
+.name{
+    font-size: 40px;
+    color: white;
+    display: block;
+    text-align: center;
+}
+.infoStr{
+    text-indent: 5px;
+    display: inline-flex;
+    margin-top: 10px;
+    margin-left: 15px;
+}
+.elem{
+    display: inline-block;
+    width: 100%;
+    height: 50px;
+}

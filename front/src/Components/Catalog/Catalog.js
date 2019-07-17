@@ -3,6 +3,8 @@ import MaterialTable from 'material-table';
 import Dialog from '@material-ui/core/Dialog';
 import * as crud from '../Requests/requests'
 import Grid from '@material-ui/core/Grid';
+import PickUp from './PickUp'
+
 
 class MaterialTableDemo extends React.Component{
     constructor(props){
@@ -15,6 +17,7 @@ class MaterialTableDemo extends React.Component{
                 { title: 'Availability', field: 'availability',type:'boolean'},
             ],
             data: [],
+            current:{},
             open:false
         };
         this.handleClickOpen = this.handleClickOpen.bind(this);
@@ -22,7 +25,7 @@ class MaterialTableDemo extends React.Component{
     }
 
     componentWillMount() {
-       crud.get('/equipment').then(result => {
+       crud.get(crud.securedApi + '/equipment').then(result => {
            this.setState({data: result.data})
        });
     }
@@ -30,8 +33,8 @@ class MaterialTableDemo extends React.Component{
     handleClickOpen = (event,rowData) => {
         this.setState({
             open: true,
-        });
-        console.log(rowData);
+            current:rowData
+        })
     };
 
     handleClose = () => {
@@ -50,7 +53,8 @@ class MaterialTableDemo extends React.Component{
                     onRowClick={this.handleClickOpen}
                 />
                 </Grid>
-                <Dialog open={this.state.open} onClose={this.handleClose} >EQUIPMENT INFORMATION</Dialog>
+                <Dialog open={this.state.open} onClose={this.handleClose} ><PickUp
+                    content = {this.state.current}/></Dialog>
             </div>
         );
     }

@@ -12,7 +12,7 @@ body {
     margin: 10% auto 0;
     padding-bottom: 20px;
 }
-.input-form{
+input{
     font-weight: unset;
     border-radius: 20px;
     display: inline-block;
@@ -23,7 +23,16 @@ body {
     outline: none;
     padding-left: 10px;
 }
-.input-form.back{
+.input-form-back{
+    font-weight: unset;
+    border-radius: 20px;
+    display: inline-block;
+    width: 200px;
+    margin: 20px 0 5px 0;
+    height: 30px;
+    border: 0;
+    outline: none;
+    padding-left: 10px;
     background-color: #ffd432;
 }
 

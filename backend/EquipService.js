@@ -12,4 +12,18 @@ function ShowEquip(request, response) {
     return request;
 }
 
+
+function ShowPicked(request,response,body){
+    connect.connection.beginTransaction(function () {
+        const sql = `SELECT * FROM equipment WHERE name = "${body}"`;
+        connect.connection.query(sql,function (err,result) {
+            if(err)
+                throw err;
+            response.send(result[0]);
+        })
+    })
+}
+
+
+module.exports.ShowPicked = ShowPicked;
 module.exports.ShowEquip = ShowEquip;
