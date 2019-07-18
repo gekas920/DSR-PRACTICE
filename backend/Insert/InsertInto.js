@@ -1,10 +1,10 @@
-
+const secure = require('../config/bcrypt');
 const models = require('../models');
 
 
 const infoAdmin1 = {
     login:'loh',
-    password:'12345',
+    password:secure.crypt.hashSync('12345',secure.salt),
     email:'test@test',
     name:'Evgeny',
     phone:'148888888',

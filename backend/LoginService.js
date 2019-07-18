@@ -1,7 +1,6 @@
-const connect = require('./Connection');
-const bcrypt = require('bcrypt');
+const secure = require('./config/bcrypt');
 const jwt = require('jwt-simple');
-const salt = bcrypt.genSaltSync(10);
+const db = require('./models');
 
 
 var secret = 'VSU';
@@ -15,56 +14,44 @@ function checkToken(token,response,next) {
         response.status(456).end();
         return;
     }
-    var sql = `SELECT * FROM users WHERE id = ? `;
-    connect.connection.query(sql, json.id, function (err, result) {
-        if (err || result.length === 0) {
-            response.status(457).end();
-        }
-        next();
-    })
-
+    db['User'].findByPk(json.id)
+        .then(result=>{
+            console.log(result);
+            if(result.length === 0){
+                response.send(457).end();
+            }
+            next();
+        })
+        .catch(err=>{
+            response.send(457).end();
+        })
 }
 
 
 function AddUser(user,response){
-    var hash = bcrypt.hashSync(user.password, salt);
-        connect.connection.beginTransaction(function () {
-            const sql = `INSERT INTO users (login, password, email, name, phone, date, admin) VALUES ("${user.login}","${hash}","${user.email}","${user.name}","${user.phone}","${user.date}","${0}")`;
-            connect.connection.query(sql, function (err, result) {
-            if (err)
-            {
-                response.status(409).end();
-            }
-            else {
-                const token = jwt.encode({id:result.insertId}, secret);
-                response.send(token);
-            }});
-    });
+    var hash = secure.crypt.hashSync(user.password, secure.salt);
+
+
 }
 
 
-function LogUser(user,response){
-    connect.connection.beginTransaction(function () {
-        var sql = `SELECT * FROM users WHERE login = "${user.login}"`;
-        connect.connection.query(sql, function (err, result) {
-            if (err){
-                response.status(500).end();
-                return;
-            }
-            if(result.length === 0){
-                response.status(204).end();
-            }
-            else {
-                if(!CheckPass(result[0].password,user.password)) {
-                    console.log(result[0].password,user.password);
-                    response.status(535).end();
-                    return;
-                }
-                response.send('hin');
-            }
-        });
-
+function LogUser(user,response) {
+    console.log(user.password);
+    db['User'].findOne({where: {login: user.login}}).then(result => {
+        if(!result){
+            response.status(524).end();
+            return;
+        }
+        if (!CheckPass(result.dataValues.password, user.password)) {
+            response.status(535).end();
+            return;
+        }
+        response.send('ZAEBIS!');
     })
+        .catch(err => {
+            console.log(err);
+            response.status(500).end();
+        })
 }
 
 
@@ -73,7 +60,10 @@ function LogUser(user,response){
  * @return {boolean}
  */
 function CheckPass(hash,password){
-    return hash === bcrypt.hashSync(password, salt);
+    console.log(password);
+    console.log(secure.crypt.hashSync(password,secure.salt));
+    console.log(hash);
+    return hash === secure.crypt.hashSync(password,secure.salt);
 }
 
 
@@ -90,7 +80,15 @@ module.exports.check = checkToken;
 
 
 
-
+// connect.connection.query(sql, function (err, result) {
+//     if (err)
+//     {
+//         response.status(409).end();
+//     }
+//     else {
+//         const token = jwt.encode({id:result.insertId}, secret);
+//         response.send(token);
+//     }});
 
 
 
