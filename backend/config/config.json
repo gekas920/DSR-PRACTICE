@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "qwerty",
+    "database": "ponomarev",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "qwerty",
+    "database": "ponomarev",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "qwerty",
+    "database": "ponomarev",
+    "host": "localhost",
+    "dialect": "mysql"
+  }
+}

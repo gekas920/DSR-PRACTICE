@@ -4,6 +4,11 @@ var cors = require('cors');
 const bodyParser = require("body-parser");
 var service = require('./LoginService');
 var equip = require('./EquipService');
+var db = require('./models');
+var insert = require('./Insert/InsertInto');
+var insertEquip = require('./Insert/InsertInto');
+
+
 
 const securedApi = '/api';
 const authHeader = 'Authorization';
@@ -43,6 +48,9 @@ app.post('/login',(request,response)=>{
 });
 
 
+
 app.listen(3000, function () {
+    db.sequelize.sync();
+    insert;
     console.log('App listening on port 3000!');
 });

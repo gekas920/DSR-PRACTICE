@@ -56,6 +56,7 @@ function LogUser(user,response){
             }
             else {
                 if(!CheckPass(result[0].password,user.password)) {
+                    console.log(result[0].password,user.password);
                     response.status(535).end();
                     return;
                 }
