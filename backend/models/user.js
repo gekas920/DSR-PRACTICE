@@ -38,7 +38,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-  User.associate = function(models) {};
+  User.associate = function(models) {
+    models.User.hasMany(models.Equipment,{
+      onDelete:'SET NULL',
+      constraints:false
+    })
+  };
 
   return User;
 };

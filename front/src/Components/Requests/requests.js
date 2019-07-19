@@ -9,10 +9,6 @@ const instance = axios.create({
 
 
 
-
-
-
-
 export const securedApi = '/api';
 
  export function create(url,body,config) {

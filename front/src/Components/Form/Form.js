@@ -48,7 +48,7 @@ class Form extends React.Component{
             phone:'',
             date:'',
             visibility:true,
-            send:false,
+            hasToken:false,
         };
         this.handleClick = this.handleClick.bind(this);
         this.accessConfirm = this.accessConfirm.bind(this);
@@ -72,11 +72,18 @@ class Form extends React.Component{
             login:this.state.login,
             password:this.state.password
         };
-        crud.update('/login',user).catch(err=>{
-            localStorage.removeItem('token');
-        });
-        this.setState({send:true});
+        crud.update('/login',user).then(result=>{
+            if(result){
+                localStorage.setItem('token',result.data);
+                this.setState({hasToken:true});
+            }
+        })
+            .catch(err=>{
+                localStorage.removeItem('token');
+                this.setState({hasToken:true});
+            })
     }
+
 
 
 
@@ -87,11 +94,24 @@ class Form extends React.Component{
             })
         }
         else {
-            crud.create('/',this.state).then(result=>{
-                localStorage.setItem('token',result.data);
-                console.log(result);
+
+             const data = {
+               login:this.state.login,
+               password:this.state.password,
+               email:this.state.email,
+               name:this.state.name,
+               phone:this.state.phone,
+               date:this.state.date
+             };
+
+
+             crud.create('/',data).then(result=>{
+                if(result){
+                    localStorage.setItem('token',result.data);
+                    this.setState({hasToken:true});
+                }
             });
-            this.setState({send:true});
+
         }
     }
 
@@ -106,7 +126,7 @@ class Form extends React.Component{
             <input placeholder="date" onChange={this.dateChange} value={this.state.date} type='date'/>
             <input type='file' placeholder="file"/>
         </div>;
-        if(this.state.send){
+        if(this.state.hasToken){
             return (
                 <Redirect to="/home"/>
             )

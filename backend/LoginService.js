@@ -1,52 +1,78 @@
 const secure = require('./config/bcrypt');
-const jwt = require('jwt-simple');
 const db = require('./models');
+const jwt = require('jsonwebtoken');
 
 
-var secret = 'VSU';
+const secret = 'VSU';
+
+
+
+function getToken(id) {
+    return jwt.sign({
+        data: id
+    }, secret, { expiresIn: '1h' });
+}
 
 
 function checkToken(token,response,next) {
     try {
-        var json = jwt.decode(token, secret);
+        const json = jwt.verify(token, secret);
+        db['User'].findByPk(json.data)
+            .then(result=>{
+                if(result.length === 0){
+                    response.send(457).end();
+                }
+                next();
+            })
+            .catch(err=>{
+                response.sendStatus(457).end();
+            })
     }
     catch (e) {
         response.status(456).end();
-        return;
     }
-    db['User'].findByPk(json.id)
-        .then(result=>{
-            console.log(result);
-            if(result.length === 0){
-                response.send(457).end();
-            }
-            next();
-        })
-        .catch(err=>{
-            response.send(457).end();
-        })
 }
 
 
 function AddUser(user,response){
-    var hash = secure.crypt.hashSync(user.password, secure.salt);
-
-
+    db['User'].findOrCreate({
+        where:{
+            login:user.login
+        },
+        defaults:{
+            login:user.login,
+            password:secure.crypt.hashSync(user.password,secure.salt),
+            email:user.email,
+            name:user.name,
+            phone:user.phone,
+            date:user.date,
+            admin:false
+        }
+    }).then(([user, created]) =>{
+        if(created){
+            const token = getToken(user.id);
+            response.send(token);
+        }
+        else {
+            response.status(409).end();
+        }
+    });
 }
 
 
 function LogUser(user,response) {
-    console.log(user.password);
     db['User'].findOne({where: {login: user.login}}).then(result => {
         if(!result){
-            response.status(524).end();
+            response.send('Incorrect login');
             return;
         }
-        if (!CheckPass(result.dataValues.password, user.password)) {
-            response.status(535).end();
+        if (!CheckPass(user.password, result.dataValues.password)) {
+            response.status(407);
+            response.send('Incorrect Password');
             return;
         }
-        response.send('ZAEBIS!');
+        const token = getToken(result.dataValues.id);
+        response.send(token);
     })
         .catch(err => {
             console.log(err);
@@ -59,11 +85,8 @@ function LogUser(user,response) {
 /**
  * @return {boolean}
  */
-function CheckPass(hash,password){
-    console.log(password);
-    console.log(secure.crypt.hashSync(password,secure.salt));
-    console.log(hash);
-    return hash === secure.crypt.hashSync(password,secure.salt);
+function CheckPass(password,hash){
+    return secure.crypt.compareSync(password,hash);
 }
 
 

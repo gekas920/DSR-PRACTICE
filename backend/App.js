@@ -6,7 +6,6 @@ const service = require('./LoginService');
 const db = require('./models');
 const insert = require('./Insert/InsertInto');
 
-
 const Api = '/api';
 
 
@@ -21,12 +20,13 @@ app.use(Api, function (req, res, next) {
 
 
 
-db.sequelize.sync().then(()=>{
-    insert;
-    app.listen(3000, function () {
-        console.log('App listening on port 3000!');
-    });
-});
+
+ db.sequelize.sync().done(result=>{          //Возможен плавающий баг)))))))))))))))))))))))
+     insert;
+     app.listen(3000, function () {
+         console.log('App listening on port 3000!');
+     });
+ });
 
 module.exports.app = app;
 module.exports.Api = Api;
