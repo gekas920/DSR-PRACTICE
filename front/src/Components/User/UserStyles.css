@@ -1,9 +1,9 @@
 .info{
-    color: white;
+    color: #000000;
     display: flex;
     font-size: 35px;
     width: 400px;
-    margin: 50px auto 0;
+    margin: 30px auto;
 }
 
 .transition{

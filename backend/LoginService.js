@@ -29,7 +29,7 @@ function checkToken(token,response,next) {
             })
     }
     catch (e) {
-        response.status(456).end();
+        response.send(null);
     }
 }
 
@@ -50,13 +50,24 @@ function AddUser(user,response){
         }
     }).then(([user, created]) =>{
         if(created){
-            const token = getToken(user.id);
+            console.log(user.admin);
+            const token = getToken({
+                id:user.id,
+                email:user.email,
+                name:user.name,
+                phone: user.phone,
+                date:user.date,
+                admin:user.admin
+            });
             response.send(token);
         }
         else {
-            response.status(409).end();
+            response.send('Already exist');
         }
-    });
+    })
+        .catch(err=>{
+            response.send('Incorrect data');
+        })
 }
 
 
@@ -67,11 +78,17 @@ function LogUser(user,response) {
             return;
         }
         if (!CheckPass(user.password, result.dataValues.password)) {
-            response.status(407);
-            response.send('Incorrect Password');
+            response.send('Incorrect password');
             return;
         }
-        const token = getToken(result.dataValues.id);
+        const token = getToken({
+            id:result.dataValues.id,
+            email:result.dataValues.email,
+            name:result.dataValues.name,
+            phone:result.dataValues.phone,
+            date:result.dataValues.date,
+            admin:result.dataValues.admin
+        });
         response.send(token);
     })
         .catch(err => {
@@ -93,25 +110,6 @@ function CheckPass(password,hash){
 module.exports.LogUser = LogUser;
 module.exports.AddUser = AddUser;
 module.exports.check = checkToken;
-
-
-
-
-
-
-
-
-
-
-// connect.connection.query(sql, function (err, result) {
-//     if (err)
-//     {
-//         response.status(409).end();
-//     }
-//     else {
-//         const token = jwt.encode({id:result.insertId}, secret);
-//         response.send(token);
-//     }});
 
 
 

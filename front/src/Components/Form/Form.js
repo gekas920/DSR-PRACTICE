@@ -39,6 +39,7 @@ const style = makeStyles(theme=>({
 class Form extends React.Component{
     constructor(props){
         super(props);
+        const token = localStorage.getItem('token');
         this.state = {
             login:'',
             password:'',
@@ -48,7 +49,11 @@ class Form extends React.Component{
             phone:'',
             date:'',
             visibility:true,
-            hasToken:false,
+            incorrectPass:false,
+            incorrectData:false,
+            incorrectField:false,
+            exist:false,
+            hasToken:!!token,
         };
         this.handleClick = this.handleClick.bind(this);
         this.accessConfirm = this.accessConfirm.bind(this);
@@ -73,14 +78,26 @@ class Form extends React.Component{
             password:this.state.password
         };
         crud.update('/login',user).then(result=>{
-            if(result){
-                localStorage.setItem('token',result.data);
-                this.setState({hasToken:true});
+            switch (result.data) {
+                case 'Incorrect password':
+                    this.setState({
+                        incorrectPass:true
+                    });
+                    break;
+                case 'Incorrect login':
+                    this.setState({
+                        incorrectData:true
+                    });
+                    break;
+                default:
+                    localStorage.setItem('token',result.data);
+                    this.setState({hasToken:true});
+                    break;
             }
         })
             .catch(err=>{
                 localStorage.removeItem('token');
-                this.setState({hasToken:true});
+                this.setState({hasToken:false});
             })
     }
 
@@ -90,7 +107,10 @@ class Form extends React.Component{
     handleClick(){
         if(this.state.visibility){
             this.setState({
-                visibility:false
+                visibility:false,
+                incorrectPass:false,
+                incorrectData:false
+
             })
         }
         else {
@@ -106,10 +126,22 @@ class Form extends React.Component{
 
 
              crud.create('/',data).then(result=>{
-                if(result){
-                    localStorage.setItem('token',result.data);
-                    this.setState({hasToken:true});
-                }
+                 switch (result.data) {
+                     case 'Incorrect data':
+                         this.setState({
+                            incorrectField:true
+                         });
+                         break;
+                      case 'Already exist':
+                          this.setState({
+                             exist:true
+                          });
+                          break;
+                     default:
+                         localStorage.setItem('token',result.data);
+                         this.setState({hasToken:true});
+                         break;
+                 }
             });
 
         }
@@ -137,12 +169,16 @@ class Form extends React.Component{
                     <div className="logo">SuperApp</div>
                     <input placeholder = 'login' onChange={this.loginChange} value={this.state.login}/>
                     <input placeholder = 'password' type='password' onChange={this.passwordChange} value={this.state.password}/>
+                    <p style={this.state.incorrectPass ? {display:'block'} :{display:'none'}}>Incorrect password</p>
+                    <p style={this.state.incorrectData ? {display:'block'} :{display:'none'}}>Incorrect data</p>
                     <div className = 'short' id = 'shorts'>password too short</div>
                     <Fab variant="extended" aria-label="Delete" className={classes.fab}
                          style={Object.assign({},styles,this.state.visibility ? {textAlign:'center'} : {display:'none'})} onClick={this.accessConfirm}>
                         Login
                     </Fab>
                     <div style = {!this.state.visibility ? {display:'block'} : {display:'none'}}>{inputs}</div>
+                    <p style={this.state.incorrectField ? {display:'block'} :{display:'none'}}>Incorrect field</p>
+                    <p style={this.state.exist ? {display:'block'} :{display:'none'}}>User already exist.</p>
                     <Fab variant="extended" aria-label="Delete" className={classes.fab} style={styles} onClick={this.handleClick}>
                         Sign in
                     </Fab>
@@ -150,25 +186,67 @@ class Form extends React.Component{
             </div>)
     }
     passwordChange(event) {
-        this.setState({password: event.target.value});
+        this.setState({
+            password: event.target.value,
+            incorrectPass:false,
+            incorrectData:false,
+           incorrectField:false,
+            exist:false,
+        });
     }
     loginChange(event) {
-        this.setState({login: event.target.value});
+        this.setState({
+            login: event.target.value,
+            incorrectPass:false,
+            incorrectData:false,
+           incorrectField:false,
+            exist:false,
+        });
     }
     emailChange(event) {
-        this.setState({email: event.target.value});
+        this.setState({
+            email: event.target.value,
+            incorrectPass:false,
+            incorrectData:false,
+           incorrectField:false,
+            exist:false
+        });
     }
     phoneChange(event) {
-        this.setState({phone: event.target.value});
+        this.setState({
+            phone: event.target.value,
+            incorrectPass:false,
+            incorrectData:false,
+           incorrectField:false,
+            exist:false
+        });
     }
     nameChange(event) {
-        this.setState({name: event.target.value});
+        this.setState({
+            name: event.target.value,
+            incorrectPass:false,
+            incorrectData:false,
+           incorrectField:false,
+            exist:false
+        });
     }
     dateChange(event) {
-        this.setState({date: event.target.value});
+        this.setState({
+            date: event.target.value,
+            incorrectPass:false,
+            incorrectData:false,
+           incorrectField:false,
+            exist:false
+        });
     }
     confirmChange(event){
-        this.setState({confirm:event.target.value});
+        this.setState({
+            confirm:event.target.value,
+            incorrectPass:false,
+            incorrectData:false,
+            incorrectField:false,
+            exist:false
+        });
     }
 }
 

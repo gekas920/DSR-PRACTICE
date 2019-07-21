@@ -1,7 +1,6 @@
 import React from 'react';
 import MaterialTable from 'material-table';
 import Dialog from '@material-ui/core/Dialog';
-import * as crud from '../Requests/requests'
 import Grid from '@material-ui/core/Grid';
 import PickUp from './PickUp'
 
@@ -11,10 +10,10 @@ class MaterialTableDemo extends React.Component{
         super(props);
         this.state = {
             columns: [
-                {title:'ID',field:'id'},
                 { title: 'Name', field: 'name' },
-                { title: 'Owner', field: 'owner'},
                 { title: 'Availability', field: 'availability',type:'boolean'},
+                { title: 'Owner', field: 'owner'},
+                { title: 'Last owner', field:'lastOwner'}
             ],
             data: [],
             current:{},
@@ -24,12 +23,12 @@ class MaterialTableDemo extends React.Component{
         this.handleClose = this.handleClose.bind(this);
     }
 
-    componentWillMount() {
-       crud.get('/equipment').then(result => {
-           console.log(result);
-           this.setState({data: result.data})
-       });
-    }
+    // componentWillMount() {
+    //    crud.get('/equipment').then(result => {
+    //        console.log(result);
+    //        this.setState({data: result.data})
+    //    });
+    // }
 
     handleClickOpen = (event,rowData) => {
         this.setState({

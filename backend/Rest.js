@@ -1,15 +1,16 @@
 const service = require('./LoginService');
 const equip = require('./EquipService');
 const secured = require('./App');
-const passport = require('passport');
-const db = require('./models');
+const change = require('./ChangeUserInfo');
 
 
 
 
 
 
-
+secured.app.post('/updateUserInfo',(request,response)=>{
+    change.ChangeInfo(request.body);
+});
 
 
   secured.app.put('/',(req,res) => {
@@ -34,9 +35,6 @@ secured.app.get(secured.Api + '/equipmentPick',(request,response)=>{
    //equip.ShowPicked(request,response,request.query.name);
 });
 
-secured.app.post('/login',(request,response)=>{
-   service.LogUser(request.body,response);
-});
 
 
 

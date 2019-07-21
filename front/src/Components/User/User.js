@@ -1,10 +1,12 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import {withStyles} from "@material-ui/styles";
 import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 import './UserStyles.css'
 import Fab from "@material-ui/core/Fab";
+import * as crud from '../Requests/requests'
+import * as jwt from 'jsonwebtoken'
 
 const styleInput = {
     width:'400px',
@@ -14,7 +16,12 @@ const styleInput = {
     marginTop: '30px'
 };
 
-
+const PaperStyle={
+    paddingTop:'30px',
+    width:'700px',
+    margin:'0 auto',
+    height:'800px'
+};
 
 
 const styles = makeStyles(theme => ({
@@ -36,6 +43,9 @@ const styles = makeStyles(theme => ({
         marginTop:'5px',
         margin: theme.spacing(1),
     },
+    root: {
+        padding: theme.spacing(3, 2),
+    },
 }));
 
 
@@ -44,12 +54,11 @@ class User extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            login:'gekas9000',
-            password:'qwerty',
-            email:'test@test',
-            name:'Evgeny',
-            phone:'89204610789',
-            date:'1999-12-23',
+            id :props.info.id,
+            email:props.info.email,
+            name:props.info.name,
+            phone:props.info.phone,
+            date:props.info.date,
             value:'',
             disabled:true,
             show:false
@@ -58,6 +67,7 @@ class User extends React.Component{
         this.handleClick = this.handleClick.bind(this);
         this.applyChanges = this.applyChanges.bind(this);
     }
+
 
     handleChange = name => event => {
         this.setState({ ...this.state.value, [name]: event.target.value });
@@ -85,20 +95,26 @@ class User extends React.Component{
     }
 
     applyChanges(){
-        if (!this.state.disabled){
-            this.setState({show:true});
-        }
-        else {
-            console.log(this.state);
-            this.setState({show:false});
-        }
+        this.setState({disabled:true});
+        const info = {
+            id:this.state.id,
+            email:this.state.email,
+            name:this.state.name,
+            phone:this.state.phone,
+            date:this.state.date
+        };
+        this.props.updateData(info);
+        crud.update('/updateUserInfo',info).then(result=>{
+            if(result){
+                 localStorage.removeItem('token');
+                 localStorage.setItem('token',jwt.sign(info,'VSU'));
+            }
+        })
     }
 
 
     render() {
         let inputs = <div>
-            {this.Inputs('login',this.state.login)}
-            {this.Inputs('password',this.state.password)}
             {this.Inputs('email',this.state.email)}
             {this.Inputs('name',this.state.name)}
             {this.Inputs('phone',this.state.phone)}
@@ -115,14 +131,16 @@ class User extends React.Component{
         </div>;
         return(
             <div>
+                <Paper className={styles.root} style={PaperStyle}>
                 <h1 className="info">User information</h1>
                 <Grid container justify="center" alignItems="center" style={{width:'400px',margin:'0 auto'}}>
                     {inputs}
                 </Grid>
+                </Paper>
             </div>
         )
     }
 }
 
 
-export default withStyles(styles)(User);
+export default User

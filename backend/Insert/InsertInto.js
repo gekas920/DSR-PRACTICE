@@ -3,11 +3,11 @@ const models = require('../models');
 
 
 const infoAdmin1 = {
-    login:'loh',
+    login:'admin',
     password:secure.crypt.hashSync('12345',secure.salt),
     email:'test@test',
     name:'Evgeny',
-    phone:'148888888',
+    phone:'88005553535',
     date:'1999-12-23',
     admin:true
 };
@@ -18,16 +18,6 @@ module.exports.insert = models.User.findOrCreate({
         login:infoAdmin1.login
     },
     defaults:infoAdmin1
-}).then(result=>{
-    if(result) {
-        const equip1 = {
-            name: 'ball',
-            availability: false,
-            description: '12312312321',
-            UserId: result[0].dataValues.id
-        };
-        models.Equipment.create(equip1);
-    }
 });
 
 

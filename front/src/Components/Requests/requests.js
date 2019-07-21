@@ -6,10 +6,10 @@ const instance = axios.create({
     timeout: 1000,
     headers: {'Authorization': ''}
 });
-
-
-
 export const securedApi = '/api';
+
+
+
 
  export function create(url,body,config) {
      const token = localStorage.getItem('token');
@@ -43,11 +43,10 @@ export const securedApi = '/api';
 
  export async function get(url,config) {
      const token = localStorage.getItem('token');
-     console.log(token);
      const defConf = {headers: {
              'Authorization': token ? token : ''
          }};
-     let exp = await instance.get(securedApi + url,Object.assign({},config,defConf))
+     let exp = await instance.get(url,Object.assign({},config,defConf))
         .then(function (response) {
             return response
         })

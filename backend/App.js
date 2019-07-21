@@ -20,13 +20,11 @@ app.use(Api, function (req, res, next) {
 
 
 
-
- db.sequelize.sync().done(result=>{          //Возможен плавающий баг)))))))))))))))))))))))
-     insert;
-     app.listen(3000, function () {
-         console.log('App listening on port 3000!');
-     });
- });
+db.sequelize.sync();
+insert;
+app.listen(3000, function () {
+    console.log('App listening on port 3000!');
+});
 
 module.exports.app = app;
 module.exports.Api = Api;
