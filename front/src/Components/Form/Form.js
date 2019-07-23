@@ -90,7 +90,8 @@ class Form extends React.Component{
                     });
                     break;
                 default:
-                    localStorage.setItem('token',result.data);
+                    localStorage.setItem('token',result.data.token);
+                    localStorage.setItem('info',JSON.stringify(result.data.info));
                     this.setState({hasToken:true});
                     break;
             }
@@ -138,7 +139,8 @@ class Form extends React.Component{
                           });
                           break;
                      default:
-                         localStorage.setItem('token',result.data);
+                         localStorage.setItem('token',result.data.token);
+                         localStorage.setItem('info',JSON.stringify(result.data.info));
                          this.setState({hasToken:true});
                          break;
                  }

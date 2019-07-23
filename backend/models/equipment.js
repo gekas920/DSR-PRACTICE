@@ -12,6 +12,12 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             type: DataTypes.BOOLEAN
         },
+        owner:{
+          type:DataTypes.STRING(30)
+        },
+        lastOwner:{
+            type:DataTypes.STRING(30)
+        },
         description: {
             allowNull: false,
             type: DataTypes.STRING

@@ -18,7 +18,9 @@
     "react-scripts": "3.0.1",
     "material-table": "latest",
     "jwt-decode": "latest",
-    "jsonwebtoken": "latest"
+    "jsonwebtoken": "latest",
+    "prop-types": "latest",
+    "clsx": "latest"
   },
   "scripts": {
     "start": "react-scripts start",

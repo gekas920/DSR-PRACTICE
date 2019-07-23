@@ -7,6 +7,8 @@ import './UserStyles.css'
 import Fab from "@material-ui/core/Fab";
 import * as crud from '../Requests/requests'
 import * as jwt from 'jsonwebtoken'
+import CustomizedSnackbars from "./SuccessSnack";
+
 
 const styleInput = {
     width:'400px',
@@ -22,6 +24,7 @@ const PaperStyle={
     margin:'0 auto',
     height:'800px'
 };
+
 
 
 const styles = makeStyles(theme => ({
@@ -46,6 +49,7 @@ const styles = makeStyles(theme => ({
     root: {
         padding: theme.spacing(3, 2),
     },
+
 }));
 
 
@@ -61,11 +65,15 @@ class User extends React.Component{
             date:props.info.date,
             value:'',
             disabled:true,
-            show:false
+            show:false,
+            open: false,
+            vertical: 'bottom',
+            horizontal: 'left',
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.applyChanges = this.applyChanges.bind(this);
+        this.handleClose = this.handleClose.bind(this);
     }
 
 
@@ -94,8 +102,16 @@ class User extends React.Component{
         }));
     }
 
+    handleClose() {
+       this.setState( {open: false });
+    }
+
+
     applyChanges(){
-        this.setState({disabled:true});
+        this.setState({
+            disabled:true,
+            open:true
+        });
         const info = {
             id:this.state.id,
             email:this.state.email,
@@ -109,7 +125,10 @@ class User extends React.Component{
                  localStorage.removeItem('token');
                  localStorage.setItem('token',jwt.sign(info,'VSU'));
             }
-        })
+        });
+        setTimeout(() => {
+            this.setState({open: false});
+        }, 1500)
     }
 
 
@@ -128,6 +147,7 @@ class User extends React.Component{
                  style={Object.assign({},styleInput,{backgroundColor:'#ffd432',height: '50px'})} onClick={this.applyChanges}>
                 Apply changes
             </Fab>
+            <CustomizedSnackbars open = {this.state.open}/>
         </div>;
         return(
             <div>
@@ -141,6 +161,7 @@ class User extends React.Component{
         )
     }
 }
+
 
 
 export default User

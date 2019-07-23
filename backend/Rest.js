@@ -1,7 +1,7 @@
 const service = require('./LoginService');
-const equip = require('./EquipService');
 const secured = require('./App');
 const change = require('./ChangeUserInfo');
+const equip = require('./EquipService');
 
 
 
@@ -24,17 +24,13 @@ secured.app.post('/login',(req,res)=>{
     service.LogUser(req.body,res);
 });
 
-
-
-secured.app.get(secured.Api + '/equipment',(request,response)=>{
-    response.status(200).end();
-   //equip.ShowEquip(request,response);
+secured.app.get(secured.Api+'/equipment',(request,response)=>{
+    equip.ShowAllEquip(response);
 });
 
 secured.app.get(secured.Api + '/equipmentPick',(request,response)=>{
    //equip.ShowPicked(request,response,request.query.name);
 });
-
 
 
 

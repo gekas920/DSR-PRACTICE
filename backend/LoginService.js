@@ -10,7 +10,7 @@ const secret = 'VSU';
 function getToken(id) {
     return jwt.sign({
         data: id
-    }, secret, { expiresIn: '1h' });
+    }, secret, { expiresIn: 30 });
 }
 
 
@@ -29,7 +29,7 @@ function checkToken(token,response,next) {
             })
     }
     catch (e) {
-        response.send(null);
+        response.status(457).end();
     }
 }
 
@@ -50,16 +50,19 @@ function AddUser(user,response){
         }
     }).then(([user, created]) =>{
         if(created){
-            console.log(user.admin);
-            const token = getToken({
-                id:user.id,
-                email:user.email,
-                name:user.name,
-                phone: user.phone,
-                date:user.date,
-                admin:user.admin
+            const token = getToken(user.dataValues.id);
+            const userInfo = {
+                id:user.dataValues.id,
+                email:user.dataValues.email,
+                name:user.dataValues.name,
+                phone:user.dataValues.phone,
+                date:user.dataValues.date,
+                admin:user.dataValues.admin
+            };
+            response.send({
+                token:token,
+                info:userInfo
             });
-            response.send(token);
         }
         else {
             response.send('Already exist');
@@ -81,15 +84,20 @@ function LogUser(user,response) {
             response.send('Incorrect password');
             return;
         }
-        const token = getToken({
+        const userInfo = {
             id:result.dataValues.id,
             email:result.dataValues.email,
             name:result.dataValues.name,
             phone:result.dataValues.phone,
             date:result.dataValues.date,
             admin:result.dataValues.admin
+        };
+
+        const token = getToken(result.dataValues.id);
+        response.send({
+            token:token,
+            info:userInfo
         });
-        response.send(token);
     })
         .catch(err => {
             console.log(err);

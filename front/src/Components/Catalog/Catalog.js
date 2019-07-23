@@ -3,7 +3,23 @@ import MaterialTable from 'material-table';
 import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
 import PickUp from './PickUp'
+import * as crud from '../Requests/requests'
+import Fab from '@material-ui/core/Fab';
+import {makeStyles} from "@material-ui/core";
+import CreateNew from './CreateNew'
+import {Redirect} from "react-router";
 
+const useStyles = makeStyles(theme => ({
+    fab: {
+        margin: theme.spacing(1),
+    },
+}));
+const butt = {
+    disabled:'block',
+    width:'250px',
+    backgroundColor: '#ffd432',
+    marginLeft:'15%'
+};
 
 class MaterialTableDemo extends React.Component{
     constructor(props){
@@ -17,18 +33,30 @@ class MaterialTableDemo extends React.Component{
             ],
             data: [],
             current:{},
-            open:false
+            admin:this.props.admin,
+            open:false,
+            openAdd:false,
+            token:true
         };
         this.handleClickOpen = this.handleClickOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.openAdd = this.openAdd.bind(this);
     }
 
-    // componentWillMount() {
-    //    crud.get('/equipment').then(result => {
-    //        console.log(result);
-    //        this.setState({data: result.data})
-    //    });
-    // }
+     componentWillMount() {
+        crud.get('/equipment').then(result => {
+            this.setState({
+                data:result.data
+            })
+        })
+            .catch(err=>{
+                console.log(err);
+                localStorage.removeItem('token');
+                this.setState({
+                    token:false
+                })
+            })
+     }
 
     handleClickOpen = (event,rowData) => {
         this.setState({
@@ -37,10 +65,23 @@ class MaterialTableDemo extends React.Component{
         })
     };
 
+    openAdd(){
+        this.setState({
+            openAdd:true
+        })
+    }
+
+
     handleClose = () => {
-        this.setState({ open: false });
+        this.setState({
+            open: false,
+            openAdd:false
+        });
     };
     render() {
+        if(!this.state.token){
+            return <Redirect to='/'/>
+        }
         return (
             <div>
                 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
@@ -53,6 +94,12 @@ class MaterialTableDemo extends React.Component{
                     onRowClick={this.handleClickOpen}
                 />
                 </Grid>
+                <Fab  variant="extended" aria-label="Delete" className={useStyles.fab}
+                      onClick={this.openAdd}
+                      style={Object.assign({},butt,{display:this.state.admin ? 'block':'none'})}>
+                    Create new
+                </Fab>
+                <Dialog open={this.state.openAdd} onClose={this.handleClose} ><CreateNew/></Dialog>
                 <Dialog open={this.state.open} onClose={this.handleClose} ><PickUp
                     content = {this.state.current}/></Dialog>
             </div>

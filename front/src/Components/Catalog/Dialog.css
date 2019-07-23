@@ -2,12 +2,13 @@
     font-family: Arial, monospace;
     font-weight: bold;
     width: 400px;
-    background-color: #c5d3f3;
+    text-align: center;
+    background-color: #ffffff;
 }
 
 .name{
     font-size: 40px;
-    color: white;
+    color: #000000;
     display: block;
     text-align: center;
 }

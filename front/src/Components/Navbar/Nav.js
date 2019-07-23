@@ -7,7 +7,7 @@ import Catalog from '../Catalog/Catalog'
 import User from "../User/User";
 import Equip from "../Equip/Equip";
 import {Redirect} from "react-router";
-import jwt_decode from 'jwt-decode'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = {
     root: {
@@ -25,6 +25,13 @@ const tabsStyle ={
     height: '65px'
 };
 
+const logo = {
+    position:'absolute',
+    marginTop:'25px',
+    marginLeft:'17px',
+    width:'10%'
+};
+
 
 class CenteredTabs extends React.Component{
     constructor(props){
@@ -37,6 +44,7 @@ class CenteredTabs extends React.Component{
             email:'',
             phone:'',
             date:'',
+            admin:'',
             hasToken:!!token,
         };
         this.handleClick = this.handleClick.bind(this);
@@ -45,33 +53,8 @@ class CenteredTabs extends React.Component{
     }
 
     componentWillMount() {
-        try {
-           var info = jwt_decode(localStorage.getItem('token'));
-            if(info.data !== undefined){
-                this.setState({
-                    id:info.data.id,
-                    name:info.data.name,
-                    email:info.data.email,
-                    phone:info.data.phone,
-                    date:info.data.date,
-                });
-            }
-            else {
-                this.setState({
-                    id:info.id,
-                    name:info.name,
-                    email:info.email,
-                    phone:info.phone,
-                    date:info.date,
-                });
-            }
-        }
-        catch (e) {
-            localStorage.removeItem('token');
-            this.setState({
-                hasToken:false
-            })
-        }
+        const info = JSON.parse(localStorage.getItem('info'));
+        this.setState(info);
     }
 
     handleChange(event, newValue) {
@@ -80,6 +63,7 @@ class CenteredTabs extends React.Component{
 
     handleClick(){
         localStorage.removeItem('token');
+        localStorage.removeItem('info');
          this.setState({hasToken:false});
     }
 
@@ -101,6 +85,12 @@ class CenteredTabs extends React.Component{
             return (
                 <div>
                     <Paper className={classes.root}>
+                        <CircularProgress disableShrink  style={{
+                            position:"absolute",
+                            marginLeft:'10px',
+                            color:'#ffd432',
+                        }} size={65}/>
+                        <p style={logo}>Super app</p>
                         <Tabs className='tab'
                               value={this.state.value}
                               onChange={this.handleChange}
@@ -120,7 +110,7 @@ class CenteredTabs extends React.Component{
                                  label="Log out"/>
                         </Tabs>
                     </Paper>
-                    {this.state.value === 0 && <Catalog/>}
+                    {this.state.value === 0 && <Catalog admin = {this.state.admin}/>}
                     {this.state.value === 1 && <Equip/>}
                     {this.state.value === 2 && <User info = {this.state} updateData = {this.updateState}/>}
                 </div>

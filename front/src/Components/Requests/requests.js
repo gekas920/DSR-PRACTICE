@@ -51,7 +51,6 @@ export const securedApi = '/api';
             return response
         })
         .catch(function (error) {
-            console.log(error);
         });
     return exp;
 }
