@@ -7,7 +7,6 @@ import * as crud from '../Requests/requests'
 import Fab from '@material-ui/core/Fab';
 import {makeStyles} from "@material-ui/core";
 import CreateNew from './CreateNew'
-import {Redirect} from "react-router";
 
 const useStyles = makeStyles(theme => ({
     fab: {
@@ -36,7 +35,6 @@ class MaterialTableDemo extends React.Component{
             admin:this.props.admin,
             open:false,
             openAdd:false,
-            token:true
         };
         this.handleClickOpen = this.handleClickOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
@@ -49,13 +47,6 @@ class MaterialTableDemo extends React.Component{
                 data:result.data
             })
         })
-            .catch(err=>{
-                console.log(err);
-                localStorage.removeItem('token');
-                this.setState({
-                    token:false
-                })
-            })
      }
 
     handleClickOpen = (event,rowData) => {
@@ -79,9 +70,6 @@ class MaterialTableDemo extends React.Component{
         });
     };
     render() {
-        if(!this.state.token){
-            return <Redirect to='/'/>
-        }
         return (
             <div>
                 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>

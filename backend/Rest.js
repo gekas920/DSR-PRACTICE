@@ -24,11 +24,11 @@ secured.app.post('/login',(req,res)=>{
     service.LogUser(req.body,res);
 });
 
-secured.app.get(secured.Api+'/equipment',(request,response)=>{
+secured.app.get('/equipment',(request,response)=>{
     equip.ShowAllEquip(response);
 });
 
-secured.app.get(secured.Api + '/equipmentPick',(request,response)=>{
+secured.app.get('/equipmentPick',(request,response)=>{
    //equip.ShowPicked(request,response,request.query.name);
 });
 
