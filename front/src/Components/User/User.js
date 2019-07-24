@@ -6,7 +6,6 @@ import Paper from '@material-ui/core/Paper';
 import './UserStyles.css'
 import Fab from "@material-ui/core/Fab";
 import * as crud from '../Requests/requests'
-import * as jwt from 'jsonwebtoken'
 import CustomizedSnackbars from "./SuccessSnack";
 
 
@@ -120,12 +119,7 @@ class User extends React.Component{
             date:this.state.date
         };
         this.props.updateData(info);
-        crud.update('/updateUserInfo',info).then(result=>{
-            if(result){
-                 localStorage.removeItem('token');
-                 localStorage.setItem('token',jwt.sign(info,'VSU'));
-            }
-        });
+        crud.update('/updateUserInfo',info)
         setTimeout(() => {
             this.setState({open: false});
         }, 1500)

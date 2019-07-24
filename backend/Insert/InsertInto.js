@@ -19,13 +19,18 @@ module.exports.insert = models.User.findOrCreate({
     },
     defaults:infoAdmin1
 }).then(result=>{
-    models.Equipment.create({
-        name:'Ball',
-        availability: true,
-        owner: '-----',
-        description:'text',
-        lastOwner: 'Nick',
-    });
+    models.Equipment.findOrCreate({
+       where:{
+           name:'Ball'
+       },
+        defaults:{
+           name:'Ball',
+            availability: true,
+            owner: '-----',
+            description:'text',
+            lastOwner: 'Nick'
+        }
+    })
 });
 
 

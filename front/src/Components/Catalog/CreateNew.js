@@ -3,6 +3,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
 import './Dialog.css'
+import * as crud from '../Requests/requests'
 
 const useStyles = makeStyles(theme => ({
     fab: {
@@ -24,7 +25,7 @@ const InputStyle ={
 const butt = {
     width:'250px',
     marginBottom: '20px',
-    marginTop:'10px',
+    marginTop:'20px',
     backgroundColor: '#ffd432'
 };
 
@@ -34,7 +35,9 @@ class CreateNew extends React.Component{
         this.state = {
             name:'',
             description:'',
-            disabled:false
+            disabled:false,
+            exist:false,
+            correct:false
         };
         this.createEquip = this.createEquip.bind(this);
         this.nameField = this.nameField.bind(this);
@@ -42,21 +45,47 @@ class CreateNew extends React.Component{
     }
 
     createEquip(){
-        console.log(this.state);
-        this.setState({
-            disabled:true
-        })
+        const equipBody = {
+          name:this.state.name,
+          owner:'-----',
+          lastOwner:'-----',
+          description:this.state.description
+        };
+        if(equipBody.name && equipBody.description){
+            crud.create('/createEquip',equipBody)
+                .then(result=>{
+                    console.log(result);
+                    if(result.data !== 'Already Exist')
+                        this.setState({
+                            disabled:true
+                        });
+                    else {
+                        this.setState({
+                            exist:true
+                        })
+                    }
+                })
+        }
+        else {
+            this.setState({
+                correct:true
+            })
+        }
     }
 
     nameField(event){
         this.setState({
-            name:event.target.value
+            name:event.target.value,
+            exist:false,
+            correct:false
         })
     }
 
     descField(event){
         this.setState({
-            description:event.target.value
+            description:event.target.value,
+            exist:false,
+            correct:false
         })
     }
 
@@ -84,6 +113,8 @@ class CreateNew extends React.Component{
             <div className="diag">
                 <h1 className='name'>Create new</h1>
             {fields}
+                <p style={this.state.exist ? {color:'black'}:{display:'none'}}>Already Exist</p>
+                <p style={this.state.correct ? {color:'black'}:{display:'none'}}>Empty Field</p>
                 <Fab variant="extended" aria-label="Delete" className={useStyles.fab}
                      disabled={this.state.disabled}
                      style={butt} onClick={this.createEquip}>

@@ -41,7 +41,7 @@ export const securedApi = '/api';
    return cnt;
 }
 
- export async function get(url,config) {
+ export async function get(url,body,config) {
      const token = localStorage.getItem('token');
      const defConf = {headers: {
              'Authorization': token ? token : ''
@@ -55,12 +55,12 @@ export const securedApi = '/api';
     return exp;
 }
 
- export function remove(config) {
+ export function remove(url,config) {
      const token = localStorage.getItem('token');
      const defConf = {headers: {
              'Authorization': token ? token : ''
          }};
-    instance.delete('/',Object.assign({},config,defConf))
+    instance.delete(url,Object.assign({},config,defConf))
         .then(function (response) {
         })
         .catch(function (error) {
@@ -68,4 +68,10 @@ export const securedApi = '/api';
         });
 }
 
+axios.interceptors.response.use((response) =>{
+   return response
+},error => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('info');
+});
 
