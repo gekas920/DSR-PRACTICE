@@ -7,6 +7,7 @@ import './UserStyles.css'
 import Fab from "@material-ui/core/Fab";
 import * as crud from '../Requests/requests'
 import CustomizedSnackbars from "./SuccessSnack";
+import {Redirect} from "react-router";
 
 
 const styleInput = {
@@ -66,8 +67,9 @@ class User extends React.Component{
             disabled:true,
             show:false,
             open: false,
+            validToken:true,
             vertical: 'bottom',
-            horizontal: 'left',
+            horizontal: 'left'
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
@@ -120,6 +122,15 @@ class User extends React.Component{
         };
         this.props.updateData(info);
         crud.update('/updateUserInfo',info)
+            .then(result=>{
+                // if(typeof result.data !== 'undefined'){
+                //     localStorage.removeItem('token');
+                //     localStorage.removeItem('info');
+                //     this.setState({
+                //         validToken:false
+                //     })
+                // }
+            });
         setTimeout(() => {
             this.setState({open: false});
         }, 1500)
@@ -143,6 +154,9 @@ class User extends React.Component{
             </Fab>
             <CustomizedSnackbars open = {this.state.open}/>
         </div>;
+        if(!this.state.validToken){
+            return <Redirect to='/'/>
+        }
         return(
             <div>
                 <Paper className={styles.root} style={PaperStyle}>

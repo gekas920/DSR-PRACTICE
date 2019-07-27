@@ -1,9 +1,6 @@
 const db = require('./models');
 
 
-
-
-
 function ShowAllEquip(response) {
     db['Equipment'].findAll().then(result=>{
         response.send(result);
@@ -49,8 +46,6 @@ function findEquip(body,response){
         })
 }
 
-
-
 function updateEquip(body,response){
     db['Equipment'].findOne({
         where:{
@@ -76,8 +71,79 @@ function deleteEquip(body,response){
     })
 }
 
+async function pickUpEquip(body, response) {
+    const user = await db['User'].findOne({
+        where: {
+            id: body.id
+        }
+    }).then(result => {
+         return result.dataValues;
+    });
+    db['Equipment'].findOne({
+        where: {
+            name: body.name
+        }
+    }).then(result => {
+        const lastOwner = result.dataValues.owner;
+        result.update({
+            owner: user.name,
+            lastOwner:lastOwner,
+            UserId:user.id,
+            availability:false
+        });
+    });
+}
+
+function showUserEquip(body,response){
+    db['Equipment'].findAll({
+        where:{
+            UserId:body.UserId
+        }
+    })
+        .then(result=>{
+            if(result.length){
+                if(result.length <= 1){
+                    response.send(result[0].dataValues)
+                }
+                else {
+                    let infoArr = result.map(elem=>{
+                        return elem.dataValues
+                    });
+                    response.send(infoArr);
+                }
+            }
+            else {
+                response.send([]);
+            }
+        })
+}
+
+function giveBackEquip(body,response){
+    let lastOwnerValue = '';
+    db['User'].findByPk(body.UserId)
+        .then(result=>{
+            lastOwnerValue = result.dataValues.name;
+        });
+    db['Equipment'].findOne({
+        where:{
+            name:body.name
+        }
+    })
+        .then(result=>{
+            result.update({
+                owner:'-----',
+                lastOwner:lastOwnerValue,
+                availability: true,
+                UserId:null
+            })
+        })
+}
+
 module.exports.ShowAllEquip = ShowAllEquip;
 module.exports.CreateEquip = CreateEquip;
 module.exports.findEquip = findEquip;
 module.exports.updateEquip = updateEquip;
 module.exports.deleteEquip = deleteEquip;
+module.exports.pickUpEquip = pickUpEquip;
+module.exports.showUserEquip = showUserEquip;
+module.exports.giveBackEquip = giveBackEquip;

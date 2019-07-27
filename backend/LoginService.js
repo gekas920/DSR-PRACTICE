@@ -10,7 +10,7 @@ const secret = 'VSU';
 function getToken(id) {
     return jwt.sign({
         data: id
-    }, secret, { expiresIn: 30 });
+    }, secret, { expiresIn: '1h' });
 }
 
 
@@ -29,7 +29,7 @@ function checkToken(token,response,next) {
             })
     }
     catch (e) {
-        response.status(457).end();
+        response.sendStatus(457).end();
     }
 }
 
@@ -105,6 +105,31 @@ function LogUser(user,response) {
         })
 }
 
+function ShowAllUsers(response) {
+    db['User'].findAll().then(result=>{
+        response.send(result);
+    })
+}
+
+
+function deleteUser(body,res) {
+    db['Equipment'].findAll({
+        where:{
+            UserId:body.id
+        }
+    })
+        .then(result=>{
+            console.log(result)
+        });
+    db['User'].destroy({
+        where:{
+            id:body.id
+        }
+    })
+        .then(result=>{
+            res.sendStatus(200);
+        })
+}
 
 
 /**
@@ -118,6 +143,8 @@ function CheckPass(password,hash){
 module.exports.LogUser = LogUser;
 module.exports.AddUser = AddUser;
 module.exports.check = checkToken;
+module.exports.showAllUsers = ShowAllUsers;
+module.exports.deleteUser = deleteUser;
 
 
 

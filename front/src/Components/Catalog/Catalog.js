@@ -2,16 +2,14 @@ import React from 'react';
 import MaterialTable from 'material-table';
 import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
-import PickUp from './PickUp'
+import TakeEquip from './TakeEquip'
 import * as crud from '../Requests/requests'
 import Fab from '@material-ui/core/Fab';
 import {makeStyles} from "@material-ui/core";
 import CreateNew from './CreateNew';
 import AddIcon from '@material-ui/icons/Add';
-import Icon from '@material-ui/core/Icon';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ChangeCurrent from "./ChangeCurrent";
-import DeleteEquip from "./DeleteEquip";
+import {Redirect} from "react-router";
+import {withStyles} from "@material-ui/styles";
 
 const useStyles = makeStyles(theme => ({
     fab: {
@@ -23,16 +21,8 @@ const butt = {
     paddingTop:'5px',
     backgroundColor: '#ffd432',
 };
-const redButt = {
-    marginTop:'3px',
-    paddingTop:'5px',
-    backgroundColor: '#2cc6ff',
-};
-const delButt = {
-    marginTop:'3px',
-    paddingTop:'5px',
-    backgroundColor:'white'
-};
+
+
 
 class MaterialTableDemo extends React.Component{
     constructor(props){
@@ -44,27 +34,32 @@ class MaterialTableDemo extends React.Component{
                 { title: 'Owner', field: 'owner'},
                 { title: 'Last owner', field:'lastOwner'}
             ],
+            id:this.props.id,
             data: [],
             current:{},
             admin:this.props.admin,
             open:false,
             openAdd:false,
-            openDel:false,
-            openRed:false
+            hasToken:true
         };
         this.handleClickOpen = this.handleClickOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.openAdd = this.openAdd.bind(this);
-        this.openRed = this.openRed.bind(this);
-        this.openDel = this.openDel.bind(this);
     }
 
-     componentWillMount() {
+    componentDidMount() {
         crud.get('/equipment').then(result => {
             this.setState({
-                data:result.data
+                data:result.data,
             })
         })
+            .catch(err=>{
+                localStorage.removeItem('token');
+                localStorage.removeItem('info');
+                this.setState({
+                    hasToken:false
+                })
+            })
      }
 
     handleClickOpen = (event,rowData) => {
@@ -80,33 +75,30 @@ class MaterialTableDemo extends React.Component{
         })
     }
 
-    openDel(){
-        this.setState({
-            openDel:true
-        })
-    }
-
-    openRed(){
-        this.setState({
-            openRed:true
-        })
-    }
-
 
     handleClose = () => {
         this.setState({
             open: false,
             openAdd:false,
-            openRed:false,
-            openDel:false
         });
         crud.get('/equipment').then(result => {
-            this.setState({
-                data:result.data
-            })
+            if(result){
+                this.setState({
+                    data:result.data
+                })
+            }
         })
+            .catch(err=>{
+                localStorage.removeItem('token');
+                this.setState({
+                    hasToken:false
+                })
+            })
     };
     render() {
+        if(!this.state.hasToken){
+            return <Redirect to='/'/>
+        }
         return (
             <div>
                 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
@@ -128,26 +120,17 @@ class MaterialTableDemo extends React.Component{
                      style={Object.assign({},butt,{display:this.state.admin ? 'inline-block':'none'})}>
                     <AddIcon style={{color:'black'}}/>
                 </Fab>
-                <Fab  aria-label="Edit"
-                     style={Object.assign({},redButt,{display:this.state.admin ? 'inline-block':'none'})}
-                      onClick={this.openRed}
-                     className={useStyles.fab}>
-                    <Icon>edit_icon</Icon>
-                </Fab>
-                <Fab aria-label="Delete"
-                     style={Object.assign({},delButt,{display:this.state.admin ? 'inline-block':'none'})}
-                     onClick={this.openDel}
-                     className={useStyles.fab}>
-                    <DeleteIcon  />
-                </Fab>
                 </div>
                 <Dialog open={this.state.openAdd} onClose={this.handleClose} ><CreateNew/></Dialog>
-                <Dialog open={this.state.openRed} onClose={this.handleClose} ><ChangeCurrent/></Dialog>
-                <Dialog open={this.state.openDel} onClose={this.handleClose} ><DeleteEquip/></Dialog>
-                <Dialog open={this.state.open} onClose={this.handleClose} ><PickUp content = {this.state.current}/></Dialog>
+                <Dialog open={this.state.open} onClose={this.handleClose} >
+                    <TakeEquip content = {this.state.current}
+                               admin = {this.state.admin}
+                               UserId = {this.state.id}
+                    />
+                </Dialog>
             </div>
         );
     }
 }
 
-export default MaterialTableDemo
+export default withStyles(useStyles)(MaterialTableDemo)

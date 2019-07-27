@@ -3,7 +3,7 @@ import {Router} from 'react-router-dom';
 import {Route} from 'react-router'
 import Form from './Form/Form'
 import {createBrowserHistory} from "history";
-import Main from "./MAIN/Main";
+import {Main} from "./MAIN/Main";
 
 const hist = createBrowserHistory();
 

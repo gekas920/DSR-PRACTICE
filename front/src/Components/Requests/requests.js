@@ -1,11 +1,5 @@
-import axios from 'axios'
+import {instance} from "../MAIN/Main";
 
-
-const instance = axios.create({
-    baseURL: 'http://localhost:3000',
-    timeout: 1000,
-    headers: {'Authorization': ''}
-});
 export const securedApi = '/api';
 
 
@@ -16,7 +10,7 @@ export const securedApi = '/api';
      const defConf = {headers: {
          'Authorization': token ? token : ''
          }};
-   const cnt =  instance.put(url,body,Object.assign({},config,defConf))
+   const cnt =  instance.put(securedApi+url,body,Object.assign({},config,defConf))
         .then(function (response) {
             return response
         })
@@ -31,7 +25,7 @@ export const securedApi = '/api';
      const defConf = {headers: {
              'Authorization': token ? token : ''
          }};
-   const cnt = instance.post(url,body,Object.assign({},config,defConf))
+   const cnt = instance.post(securedApi+url,body,Object.assign({},config,defConf))
         .then(function (response) {
             return response
         })
@@ -41,12 +35,12 @@ export const securedApi = '/api';
    return cnt;
 }
 
- export async function get(url,body,config) {
+ export async function get(url,config) {
      const token = localStorage.getItem('token');
      const defConf = {headers: {
              'Authorization': token ? token : ''
          }};
-     let exp = await instance.get(url,Object.assign({},config,defConf))
+     let exp = await instance.get(securedApi+url,Object.assign({},config,defConf))
         .then(function (response) {
             return response
         })
@@ -68,10 +62,27 @@ export const securedApi = '/api';
         });
 }
 
-axios.interceptors.response.use((response) =>{
-   return response
-},error => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('info');
-});
+export function login(url,body,config) {
+    const cnt =  instance.post(url,body,config)
+        .then(function (response) {
+            return response
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    return cnt;
+}
+
+export function register(url,body,config) {
+    const cnt = instance.post(url,body,config)
+        .then(function (response) {
+            return response
+        })
+        .catch(function (error) {
+            return error
+        });
+    return cnt;
+}
+
+
 

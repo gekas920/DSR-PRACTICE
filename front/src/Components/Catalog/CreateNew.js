@@ -4,6 +4,7 @@ import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
 import './Dialog.css'
 import * as crud from '../Requests/requests'
+import CustomizedSnackbars from "../User/SuccessSnack";
 
 const useStyles = makeStyles(theme => ({
     fab: {
@@ -37,7 +38,8 @@ class CreateNew extends React.Component{
             description:'',
             disabled:false,
             exist:false,
-            correct:false
+            correct:false,
+            open:false
         };
         this.createEquip = this.createEquip.bind(this);
         this.nameField = this.nameField.bind(this);
@@ -54,17 +56,21 @@ class CreateNew extends React.Component{
         if(equipBody.name && equipBody.description){
             crud.create('/createEquip',equipBody)
                 .then(result=>{
-                    console.log(result);
-                    if(result.data !== 'Already Exist')
+                    if(result.data !== 'Already Exist') {
                         this.setState({
-                            disabled:true
+                            disabled: true,
+                            open: true
                         });
+                        setTimeout(() => {
+                            this.setState({open: false});
+                        }, 1500);
+                    }
                     else {
                         this.setState({
-                            exist:true
+                            exist:true,
                         })
                     }
-                })
+                });
         }
         else {
             this.setState({
@@ -120,6 +126,7 @@ class CreateNew extends React.Component{
                      style={butt} onClick={this.createEquip}>
                     Create
                 </Fab>
+                <CustomizedSnackbars open = {this.state.open}/>
             </div>
         )
     }

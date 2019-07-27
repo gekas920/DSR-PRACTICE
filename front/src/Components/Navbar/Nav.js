@@ -5,9 +5,10 @@ import Tab from '@material-ui/core/Tab';
 import {withStyles} from "@material-ui/styles";
 import Catalog from '../Catalog/Catalog'
 import User from "../User/User";
-import Equip from "../Equip/Equip";
+import UserEquip from '../UserEquip/UserEquip'
 import {Redirect} from "react-router";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import UserList from "../UserList/UserList";
 
 const styles = {
     root: {
@@ -108,11 +109,15 @@ class CenteredTabs extends React.Component{
                                 {position:'absolute',right:0,backgroundColor:'#ffd432',borderRadius:'5px'})}
                                  onClick={this.handleClick}
                                  label="Log out"/>
+                            {this.state.admin &&
+                            <Tab style={tabsStyle} label="User List" onClick={()=>{console.log(this.state.value)}}/>
+                            }
                         </Tabs>
                     </Paper>
-                    {this.state.value === 0 && <Catalog admin = {this.state.admin}/>}
-                    {this.state.value === 1 && <Equip/>}
+                    {this.state.value === 0 && <Catalog admin = {this.state.admin} id = {this.state.id}/>}
+                    {this.state.value === 1 && <UserEquip id = {this.state.id}/>}
                     {this.state.value === 2 && <User info = {this.state} updateData = {this.updateState}/>}
+                    {this.state.value === 4 && <UserList/>}
                 </div>
             );
         }

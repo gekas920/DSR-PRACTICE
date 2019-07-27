@@ -5,7 +5,7 @@ import * as crud from '../Requests/requests'
 import {makeStyles} from '@material-ui/core/styles';
 import {withStyles} from "@material-ui/styles";
 import Fab from '@material-ui/core/Fab';
-
+import Button from "@material-ui/core/Button";
 
 const styles = {
     width: '200px',
@@ -22,7 +22,7 @@ const classes = makeStyles(theme => ({
     },
     extendedIcon: {
         marginRight: theme.spacing(1),
-    },
+    }
 }));
 
 
@@ -77,7 +77,7 @@ class Form extends React.Component{
             login:this.state.login,
             password:this.state.password
         };
-        crud.update('/login',user).then(result=>{
+        crud.login('/login',user).then(result=>{
             switch (result.data) {
                 case 'Incorrect password':
                     this.setState({
@@ -126,24 +126,24 @@ class Form extends React.Component{
              };
 
 
-             crud.create('/',data).then(result=>{
-                 switch (result.data) {
-                     case 'Incorrect data':
-                         this.setState({
+            crud.register('/',data).then(result=>{
+                switch (result.data) {
+                    case 'Incorrect data':
+                        this.setState({
                             incorrectField:true
-                         });
-                         break;
-                      case 'Already exist':
-                          this.setState({
-                             exist:true
-                          });
-                          break;
-                     default:
-                         localStorage.setItem('token',result.data.token);
-                         localStorage.setItem('info',JSON.stringify(result.data.info));
-                         this.setState({hasToken:true});
-                         break;
-                 }
+                        });
+                        break;
+                    case 'Already exist':
+                        this.setState({
+                            exist:true
+                        });
+                        break;
+                    default:
+                        localStorage.setItem('token',result.data.token);
+                        localStorage.setItem('info',JSON.stringify(result.data.info));
+                        this.setState({hasToken:true});
+                        break;
+                }
             });
 
         }
@@ -158,7 +158,20 @@ class Form extends React.Component{
             <input placeholder="name"  onChange={this.nameChange} value={this.state.name}/>
             <input placeholder="phone" onChange={this.phoneChange} value={this.state.phone}/>
             <input placeholder="date" onChange={this.dateChange} value={this.state.date} type='date'/>
-            <input type='file' placeholder="file"/>
+            <input
+                accept="image/*"
+                style={{display:'none'}}
+                id="contained-button-file"
+                multiple
+                type="file"
+            />
+            <label htmlFor="contained-button-file">
+                <Button variant="contained" component="span"
+                        style={{width: '160px',marginTop:'10px',backgroundColor: '#ffd432'}}
+                        className={classes.button}>
+                    Upload
+                </Button>
+            </label>
         </div>;
         if(this.state.hasToken){
             return (
@@ -251,8 +264,6 @@ class Form extends React.Component{
         });
     }
 }
-
-//<div style = {!this.state.conf ? {display:'block'} : {display:'none'}}>Incorrect passwords</div>
 
 
 export default withStyles(style)(Form)
