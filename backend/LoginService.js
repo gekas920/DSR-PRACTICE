@@ -156,7 +156,6 @@ module.exports.AddUser = AddUser;
 module.exports.check = checkToken;
 module.exports.showAllUsers = ShowAllUsers;
 module.exports.deleteUser = deleteUser;
-module.exports.loadPhoto = loadPhoto;
 
 
 
