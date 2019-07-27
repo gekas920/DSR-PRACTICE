@@ -53,6 +53,7 @@ class Form extends React.Component{
             incorrectData:false,
             incorrectField:false,
             exist:false,
+            selectedFile:'',
             hasToken:!!token,
         };
         this.handleClick = this.handleClick.bind(this);
@@ -104,7 +105,6 @@ class Form extends React.Component{
 
 
 
-
     handleClick(){
         if(this.state.visibility){
             this.setState({
@@ -115,36 +115,44 @@ class Form extends React.Component{
             })
         }
         else {
+            if(this.isEqual())
+            {
+                const data = {
+                    login:this.state.login,
+                    password:this.state.password,
+                    email:this.state.email,
+                    name:this.state.name,
+                    phone:this.state.phone,
+                    date:this.state.date,
+                    photo:this.state.selectedFile
+                };
 
-             const data = {
-               login:this.state.login,
-               password:this.state.password,
-               email:this.state.email,
-               name:this.state.name,
-               phone:this.state.phone,
-               date:this.state.date
-             };
 
-
-            crud.register('/',data).then(result=>{
-                switch (result.data) {
-                    case 'Incorrect data':
-                        this.setState({
-                            incorrectField:true
-                        });
-                        break;
-                    case 'Already exist':
-                        this.setState({
-                            exist:true
-                        });
-                        break;
-                    default:
-                        localStorage.setItem('token',result.data.token);
-                        localStorage.setItem('info',JSON.stringify(result.data.info));
-                        this.setState({hasToken:true});
-                        break;
-                }
-            });
+                crud.register('/',data).then(result=>{
+                    switch (result.data) {
+                        case 'Incorrect data':
+                            this.setState({
+                                incorrectField:true
+                            });
+                            break;
+                        case 'Already exist':
+                            this.setState({
+                                exist:true
+                            });
+                            break;
+                        default:
+                            localStorage.setItem('token',result.data.token);
+                            localStorage.setItem('info',JSON.stringify(result.data.info));
+                            this.setState({hasToken:true});
+                            break;
+                    }
+                });
+            }
+            else {
+                this.setState({
+                    incorrectField:true
+                });
+            }
 
         }
     }
@@ -164,6 +172,7 @@ class Form extends React.Component{
                 id="contained-button-file"
                 multiple
                 type="file"
+                onChange={this.imageChange}
             />
             <label htmlFor="contained-button-file">
                 <Button variant="contained" component="span"

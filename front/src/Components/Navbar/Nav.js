@@ -110,7 +110,7 @@ class CenteredTabs extends React.Component{
                                  onClick={this.handleClick}
                                  label="Log out"/>
                             {this.state.admin &&
-                            <Tab style={tabsStyle} label="User List" onClick={()=>{console.log(this.state.value)}}/>
+                            <Tab style={tabsStyle} label="User List"/>
                             }
                         </Tabs>
                     </Paper>

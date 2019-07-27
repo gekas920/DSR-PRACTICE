@@ -4,7 +4,7 @@ const models = require('../models');
 
 const infoAdmin1 = {
     login:'admin',
-    password:secure.crypt.hashSync('12345',secure.salt),
+    password:secure.crypt.hashSync('qwerty',secure.salt),
     email:'test@test',
     name:'Evgeny',
     phone:'88005553535',
@@ -12,30 +12,90 @@ const infoAdmin1 = {
     admin:true
 };
 
+const infoAdmin2= {
+    login:'Superadmin',
+    password:secure.crypt.hashSync('qwerty',secure.salt),
+    email:'email@email',
+    name:'Elisey',
+    phone:'89204610789',
+    date:'1993-10-13',
+    admin:true
+};
 
-module.exports.insert = models.User.findOrCreate({
-    where:{
-        login:infoAdmin1.login
-    },
-    defaults:infoAdmin1
-}).then(result=>{
-    models.Equipment.findOrCreate({
-       where:{
-           name:'Ball'
-       },
-        defaults:{
-           name:'Ball',
-            availability: true,
-            owner: '-----',
-            description:'text',
-            lastOwner: 'Nick'
-        }
+const infoAdmin3= {
+    login:'Cooladmin',
+    password:secure.crypt.hashSync('qwerty',secure.salt),
+    email:'admin@email',
+    name:'Akakiy',
+    phone:'1485369',
+    date:'1990-07-05',
+    admin:true
+};
+
+const arrUsers = [infoAdmin1,infoAdmin2,infoAdmin3];
+arrUsers.forEach(element=>{
+    module.exports.insert = models.User.findOrCreate({   //Это ужасно
+        where:{
+            login:element.login
+        },
+        defaults:element
     })
 });
 
 
+const Equip1= {
+  name:'Ball',
+  availability:true,
+  owner:'-----',
+  lastOwner:'-----',
+  description:"Cool leather ball. It seems really old but kids love to kick the ball in the old ladies"
+};
 
 
+const Equip2= {
+    name:'JBL p.speaker',
+    availability:true,
+    owner:'-----',
+    lastOwner:'-----',
+    description:"In some situation it's really necessary. You mustn't turn on it on the streets"
+};
+
+
+const Equip3= {
+    name:'Knife',
+    availability:true,
+    owner:'-----',
+    lastOwner:'-----',
+    description:'Cold steel.It smells like fish'
+};
+
+const Equip4= {
+    name:'Phone',
+    availability:true,
+    owner:'-----',
+    lastOwner:'-----',
+    description:'Xiaomi.Top!'
+};
+
+const Equip5= {
+    name:'English vocabulary',
+    availability:true,
+    owner:'-----',
+    lastOwner:'-----',
+    description:"It's useful book for translator"
+};
+
+
+
+const arrEquip = [Equip1,Equip2,Equip3,Equip4,Equip5];
+arrEquip.forEach(element=>{
+    module.exports.insert = models.Equipment.findOrCreate({   //Это ужасно
+        where:{
+            name:element.name
+        },
+        defaults:element
+    })
+});
 
 
 

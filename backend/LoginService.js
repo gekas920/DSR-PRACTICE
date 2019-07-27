@@ -46,7 +46,8 @@ function AddUser(user,response){
             name:user.name,
             phone:user.phone,
             date:user.date,
-            admin:false
+            admin:false,
+            photo:user.photo
         }
     }).then(([user, created]) =>{
         if(created){
@@ -57,7 +58,7 @@ function AddUser(user,response){
                 name:user.dataValues.name,
                 phone:user.dataValues.phone,
                 date:user.dataValues.date,
-                admin:user.dataValues.admin
+                admin:user.dataValues.admin,
             };
             response.send({
                 token:token,
@@ -90,7 +91,7 @@ function LogUser(user,response) {
             name:result.dataValues.name,
             phone:result.dataValues.phone,
             date:result.dataValues.date,
-            admin:result.dataValues.admin
+            admin:result.dataValues.admin,
         };
 
         const token = getToken(result.dataValues.id);
@@ -119,7 +120,15 @@ function deleteUser(body,res) {
         }
     })
         .then(result=>{
-            console.log(result)
+            result.forEach(element=>{
+                let lastOwner = element.dataValues.owner;
+                element.update({
+                    UserId:null,
+                    availability:true,
+                    owner:'-----',
+                    lastOwner:lastOwner
+                });
+            })
         });
     db['User'].destroy({
         where:{
@@ -140,11 +149,14 @@ function CheckPass(password,hash){
 }
 
 
+
+
 module.exports.LogUser = LogUser;
 module.exports.AddUser = AddUser;
 module.exports.check = checkToken;
 module.exports.showAllUsers = ShowAllUsers;
 module.exports.deleteUser = deleteUser;
+module.exports.loadPhoto = loadPhoto;
 
 
 

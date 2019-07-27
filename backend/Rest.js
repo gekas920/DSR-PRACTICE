@@ -68,4 +68,7 @@ secured.app.post(secured.Api+'/giveBackEquip',(req,res)=>{
    equip.giveBackEquip(req.body,res);
 });
 
+secured.app.post(secured.Api+'/getPhoto',(req,res)=>{
+    service.loadPhoto(req.body,res);
+});
 
