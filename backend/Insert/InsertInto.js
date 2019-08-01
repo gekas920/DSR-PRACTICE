@@ -45,43 +45,36 @@ arrUsers.forEach(element=>{
 
 const Equip1= {
   name:'Ball',
-  availability:true,
-  owner:'-----',
-  lastOwner:'-----',
-  description:"Cool leather ball. It seems really old but kids love to kick the ball in the old ladies"
+  availability:false,
+  description:"Cool leather ball. It seems really old but kids love to kick the ball in the old ladies",
+    UserId:1
 };
 
 
 const Equip2= {
     name:'JBL p.speaker',
     availability:true,
-    owner:'-----',
-    lastOwner:'-----',
-    description:"In some situation it's really necessary. You mustn't turn on it on the streets"
+    description:"In some situation it's really necessary. You mustn't turn on it on the streets",
+    UserId:2
 };
 
 
 const Equip3= {
     name:'Knife',
-    availability:true,
-    owner:'-----',
-    lastOwner:'-----',
-    description:'Cold steel.It smells like fish'
+    availability:false,
+    description:'Cold steel.It smells like fish',
+    UserId:3
 };
 
 const Equip4= {
     name:'Phone',
     availability:true,
-    owner:'-----',
-    lastOwner:'-----',
     description:'Xiaomi.Top!'
 };
 
 const Equip5= {
     name:'English vocabulary',
     availability:true,
-    owner:'-----',
-    lastOwner:'-----',
     description:"It's useful book for translator"
 };
 
@@ -89,7 +82,7 @@ const Equip5= {
 
 const arrEquip = [Equip1,Equip2,Equip3,Equip4,Equip5];
 arrEquip.forEach(element=>{
-    module.exports.insert = models.Equipment.findOrCreate({   //Это ужасно
+    module.exports.insert = models.Equipment.findOrCreate({
         where:{
             name:element.name
         },

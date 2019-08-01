@@ -54,7 +54,7 @@ export const securedApi = '/api';
      const defConf = {headers: {
              'Authorization': token ? token : ''
          }};
-    instance.delete(url,Object.assign({},config,defConf))
+    instance.delete(securedApi+url,Object.assign({},config,defConf))
         .then(function (response) {
         })
         .catch(function (error) {

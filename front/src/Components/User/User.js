@@ -63,6 +63,7 @@ class User extends React.Component{
             name:props.info.name,
             phone:props.info.phone,
             date:props.info.date,
+            picture:'',
             value:'',
             disabled:true,
             show:false,
@@ -78,6 +79,17 @@ class User extends React.Component{
     }
 
 
+    // componentDidMount() {
+    //     crud.update('/getPic',{
+    //         id:this.state.id
+    //     })
+    //         .then(result=>{
+    //             console.log(result);
+    //             this.setState({
+    //                 picture : result.data
+    //             })
+    //         })
+    // }
 
     handleChange = name => event => {
         this.setState({ ...this.state.value, [name]: event.target.value });
@@ -140,6 +152,9 @@ class User extends React.Component{
 
     render() {
         let inputs = <div>
+            <div>
+                {this.state.picture}
+            </div>
             {this.Inputs('email',this.state.email)}
             {this.Inputs('name',this.state.name)}
             {this.Inputs('phone',this.state.phone)}

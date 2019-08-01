@@ -9,7 +9,6 @@ import {makeStyles} from "@material-ui/core";
 import CreateNew from './CreateNew';
 import AddIcon from '@material-ui/icons/Add';
 import {Redirect} from "react-router";
-import {withStyles} from "@material-ui/styles";
 
 const useStyles = makeStyles(theme => ({
     fab: {
@@ -49,6 +48,14 @@ class MaterialTableDemo extends React.Component{
 
     componentDidMount() {
         crud.get('/equipment').then(result => {
+            result.data.forEach(element=>{
+               if(!element.owner) {
+                   element.owner = '———';
+               }
+               if(!element.lastOwner){
+                   element.lastOwner = '———';
+               }
+            });
             this.setState({
                 data:result.data,
             })
@@ -82,11 +89,17 @@ class MaterialTableDemo extends React.Component{
             openAdd:false,
         });
         crud.get('/equipment').then(result => {
-            if(result){
-                this.setState({
-                    data:result.data
-                })
-            }
+            result.data.forEach(element=>{
+                if(!element.owner) {
+                    element.owner = '———';
+                }
+                if(!element.lastOwner){
+                    element.lastOwner = '———';
+                }
+            });
+            this.setState({
+                data:result.data,
+            })
         })
             .catch(err=>{
                 localStorage.removeItem('token');
@@ -133,4 +146,4 @@ class MaterialTableDemo extends React.Component{
     }
 }
 
-export default withStyles(useStyles)(MaterialTableDemo)
+export default MaterialTableDemo

@@ -35,6 +35,7 @@ const InputStyle ={
 class UserInfo extends React.Component{
     constructor(props){
         super(props);
+        console.log(this.props.id);
         this.state = {
             id:props.content.id,
             name:props.content.name,
@@ -74,7 +75,7 @@ class UserInfo extends React.Component{
     }
 
     deleteUser(){
-        crud.update('/deleteUser',this.state);
+        crud.remove(`/deleteUser/${this.state.id}`);
         this.setState({
             deleted:true
         })

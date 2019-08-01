@@ -12,7 +12,6 @@ class UserEquip extends React.Component{
         this.state = {
             columns: [
                 { title: 'Name', field: 'name' },
-                { title: 'Last owner', field:'lastOwner'}
             ],
             data: [],
             current:{},
@@ -24,9 +23,7 @@ class UserEquip extends React.Component{
     }
 
     componentDidMount() {
-        crud.update('/showUserEquip',{
-            UserId:this.state.user
-        }).then(result => {
+        crud.get(`/showUserEquip/${this.state.user}`).then(result => {
             if(!Array.isArray(result.data)){
                 this.setState({
                     data:[result.data]
@@ -60,9 +57,7 @@ class UserEquip extends React.Component{
         this.setState({
             open: false,
         });
-        crud.update('/showUserEquip',{
-            UserId:this.state.user
-        }).then(result => {
+        crud.get(`/showUserEquip/${this.state.user}`).then(result => {
             if(!Array.isArray(result.data)){
                 this.setState({
                     data:[result.data]

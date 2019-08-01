@@ -90,13 +90,11 @@ class TakeEquip extends React.Component{
     };
 
     removeEquip(){
-        crud.update('/removeEquip',{name:this.state.name})
-            .then(result=>{
-                this.setState({
-                    done:true,
-                    open:true
-                })
-            });
+        crud.remove(`/removeEquip/${this.state.name}`);
+        this.setState({
+            done:true,
+            open:true
+        });
         setTimeout(() => {
             this.setState({open: false});
         }, 1500)

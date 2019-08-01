@@ -47,7 +47,6 @@ function AddUser(user,response){
             phone:user.phone,
             date:user.date,
             admin:false,
-            photo:user.photo
         }
     }).then(([user, created]) =>{
         if(created){
@@ -116,27 +115,32 @@ function ShowAllUsers(response) {
 function deleteUser(body,res) {
     db['Equipment'].findAll({
         where:{
-            UserId:body.id
+            UserId:body
         }
     })
         .then(result=>{
             result.forEach(element=>{
-                let lastOwner = element.dataValues.owner;
                 element.update({
                     UserId:null,
                     availability:true,
-                    owner:'-----',
-                    lastOwner:lastOwner
                 });
             })
         });
     db['User'].destroy({
         where:{
-            id:body.id
+            id:body
         }
     })
         .then(result=>{
             res.sendStatus(200);
+        })
+}
+
+
+function getPic(body,response) {
+    db['User'].findByPk(body.id)
+        .then(result=>{
+            response.send(result.dataValues.picture);
         })
 }
 
@@ -156,6 +160,7 @@ module.exports.AddUser = AddUser;
 module.exports.check = checkToken;
 module.exports.showAllUsers = ShowAllUsers;
 module.exports.deleteUser = deleteUser;
+module.exports.getPic = getPic;
 
 
 

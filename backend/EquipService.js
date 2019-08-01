@@ -2,8 +2,26 @@ const db = require('./models');
 
 
 function ShowAllEquip(response) {
-    db['Equipment'].findAll().then(result=>{
-        response.send(result);
+    db['Equipment'].findAll(
+        {
+            include:[{
+                model:db.User
+            }]
+        }
+    ).then(result=>{
+        const arr = result.map(elem=>{
+            const hasOwner = !!elem.dataValues.User;
+            const avail = elem.dataValues.availability;
+            const ownerName = hasOwner ? elem.dataValues.User.dataValues.name : null;
+            return {
+                name:elem.dataValues.name,
+                availability: elem.dataValues.availability,
+                owner: avail ? null : ownerName,
+                lastOwner:avail ? ownerName : null,
+                description: elem.dataValues.description
+            }
+        });
+        response.send(arr);
     })
 
 }
@@ -15,8 +33,6 @@ function CreateEquip(body,response){
         },
         defaults:{
             name:body.name,
-            owner:'-----',
-            lastOwner:'-----',
             availability:true,
             description:body.description
         }
@@ -30,21 +46,6 @@ function CreateEquip(body,response){
     });
 }
 
-function findEquip(body,response){
-    db['Equipment'].findOne({
-        where:{
-            name:body.name
-        }
-    })
-        .then(result=>{
-            if(result){
-                response.send(result)
-            }
-            else {
-                response.send('Not found');
-            }
-        })
-}
 
 function updateEquip(body,response){
     db['Equipment'].findOne({
@@ -64,7 +65,7 @@ function updateEquip(body,response){
 function deleteEquip(body,response){
     db['Equipment'].destroy({
         where:{
-            name:body.name
+            name:body
         }
     }).then(result=>{
         response.send('OK');
@@ -84,10 +85,7 @@ async function pickUpEquip(body, response) {
             name: body.name
         }
     }).then(result => {
-        const lastOwner = result.dataValues.owner;
         result.update({
-            owner: user.name,
-            lastOwner:lastOwner,
             UserId:user.id,
             availability:false
         });
@@ -97,7 +95,8 @@ async function pickUpEquip(body, response) {
 function showUserEquip(body,response){
     db['Equipment'].findAll({
         where:{
-            UserId:body.UserId
+            UserId:body,
+            availability:false
         }
     })
         .then(result=>{
@@ -119,11 +118,6 @@ function showUserEquip(body,response){
 }
 
 function giveBackEquip(body,response){
-    let lastOwnerValue = '';
-    db['User'].findByPk(body.UserId)
-        .then(result=>{
-            lastOwnerValue = result.dataValues.name;
-        });
     db['Equipment'].findOne({
         where:{
             name:body.name
@@ -131,17 +125,14 @@ function giveBackEquip(body,response){
     })
         .then(result=>{
             result.update({
-                owner:'-----',
-                lastOwner:lastOwnerValue,
                 availability: true,
-                UserId:null
+                UserId:body.UserId
             })
         })
 }
 
 module.exports.ShowAllEquip = ShowAllEquip;
 module.exports.CreateEquip = CreateEquip;
-module.exports.findEquip = findEquip;
 module.exports.updateEquip = updateEquip;
 module.exports.deleteEquip = deleteEquip;
 module.exports.pickUpEquip = pickUpEquip;

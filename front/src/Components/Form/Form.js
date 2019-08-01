@@ -66,12 +66,13 @@ class Form extends React.Component{
         this.nameChange = this.nameChange.bind(this);
         this.confirmChange = this.confirmChange.bind(this);
         this.isEqual = this.isEqual.bind(this);
-
     }
 
     isEqual(){
         return this.state.password === this.state.confirm
     }
+
+
 
     accessConfirm() {
         const user = {
@@ -115,7 +116,7 @@ class Form extends React.Component{
             })
         }
         else {
-            if(this.isEqual())
+            if(this.isEqual() && this.state.name && this.state.phone && this.state.date && this.state.email && this.state.password && this.state.name)
             {
                 const data = {
                     login:this.state.login,
@@ -124,7 +125,6 @@ class Form extends React.Component{
                     name:this.state.name,
                     phone:this.state.phone,
                     date:this.state.date,
-                    photo:this.state.selectedFile
                 };
 
 
@@ -167,12 +167,12 @@ class Form extends React.Component{
             <input placeholder="phone" onChange={this.phoneChange} value={this.state.phone}/>
             <input placeholder="date" onChange={this.dateChange} value={this.state.date} type='date'/>
             <input
-                accept="image/*"
                 style={{display:'none'}}
+                accept="image/*"
+                name='image'
                 id="contained-button-file"
                 multiple
                 type="file"
-                onChange={this.imageChange}
             />
             <label htmlFor="contained-button-file">
                 <Button variant="contained" component="span"
@@ -203,9 +203,16 @@ class Form extends React.Component{
                     <div style = {!this.state.visibility ? {display:'block'} : {display:'none'}}>{inputs}</div>
                     <p style={this.state.incorrectField ? {display:'block'} :{display:'none'}}>Incorrect field</p>
                     <p style={this.state.exist ? {display:'block'} :{display:'none'}}>User already exist.</p>
-                    <Fab variant="extended" aria-label="Delete" className={classes.fab} style={styles} onClick={this.handleClick}>
-                        Sign in
-                    </Fab>
+                        {this.state.visibility &&
+                        <Fab  variant="extended" aria-label="Delete" className={classes.fab} style={styles} onClick={this.handleClick}>
+                            Sign in
+                        </Fab>
+                        }
+                        {!this.state.visibility &&
+                        <Fab  type='submit' variant="extended" aria-label="Delete" className={classes.fab} style={styles} onClick={this.handleClick}>
+                            Sign in
+                        </Fab>
+                        }
                 </div>
             </div>)
     }

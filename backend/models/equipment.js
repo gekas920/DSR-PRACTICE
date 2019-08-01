@@ -3,7 +3,7 @@
 
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-    var Equipment = sequelize.define('Equipment', {
+    const Equipment = sequelize.define('Equipment', {
         name: {
             allowNull: false,
             type: DataTypes.STRING(30)
@@ -11,12 +11,6 @@ module.exports = (sequelize, DataTypes) => {
         availability: {
             allowNull: false,
             type: DataTypes.BOOLEAN
-        },
-        owner:{
-          type:DataTypes.STRING(30)
-        },
-        lastOwner:{
-            type:DataTypes.STRING(30)
         },
         description: {
             allowNull: false,
