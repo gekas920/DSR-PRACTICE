@@ -22,20 +22,22 @@ const useStyles = makeStyles(theme => ({
 
 const butt = {
     width:'250px',
-    marginBottom: '25px',
-    marginTop:'25px',
+    margin:'0 auto',
+    marginTop:'10px',
+    marginBottom:'10px',
+    display:'inline-block',
     backgroundColor: '#ffd432'
 };
 
 const InputStyle ={
     minWidth: '300px',
+    marginLeft:'10px'
 };
 
 
 class UserInfo extends React.Component{
     constructor(props){
         super(props);
-        console.log(this.props.id);
         this.state = {
             id:props.content.id,
             name:props.content.name,
@@ -143,7 +145,7 @@ class UserInfo extends React.Component{
                     Apply changes
                 </Fab>
                 <Fab  disabled={this.state.deleted || this.state.admin} onClick={this.deleteUser} variant="extended" aria-label="Delete" className={useStyles.fab}
-                      style={Object.assign({},butt,{marginTop:'-5px'})}>
+                      style={butt}>
                     Delete
                 </Fab>
             </div>

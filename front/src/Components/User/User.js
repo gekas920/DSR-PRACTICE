@@ -8,6 +8,7 @@ import Fab from "@material-ui/core/Fab";
 import * as crud from '../Requests/requests'
 import CustomizedSnackbars from "./SuccessSnack";
 import {Redirect} from "react-router";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 
 const styleInput = {
@@ -49,6 +50,9 @@ const styles = makeStyles(theme => ({
     root: {
         padding: theme.spacing(3, 2),
     },
+    roots: {
+        flexGrow: 1,
+    },
 
 }));
 
@@ -79,17 +83,25 @@ class User extends React.Component{
     }
 
 
-    // componentDidMount() {
-    //     crud.update('/getPic',{
-    //         id:this.state.id
-    //     })
-    //         .then(result=>{
-    //             console.log(result);
-    //             this.setState({
-    //                 picture : result.data
-    //             })
-    //         })
-    // }
+
+    componentDidMount() {
+        crud.get(`/getPicture/${this.state.id}`,{ responseType: 'arraybuffer' })
+            .then(result=>{
+                try {
+                    const base64 = btoa(
+                        new Uint8Array(result.data).reduce(
+                            (data, byte) => data + String.fromCharCode(byte),
+                            '',
+                        ),
+                    );
+                    this.setState({ picture: "data:;base64," + base64 });
+                }
+                catch (e) {
+                    this.setState({picture:''});
+                }
+            })
+    }
+
 
     handleChange = name => event => {
         this.setState({ ...this.state.value, [name]: event.target.value });
@@ -135,15 +147,7 @@ class User extends React.Component{
         };
         this.props.updateData(info);
         crud.update('/updateUserInfo',info)
-            .then(result=>{
-                // if(typeof result.data !== 'undefined'){
-                //     localStorage.removeItem('token');
-                //     localStorage.removeItem('info');
-                //     this.setState({
-                //         validToken:false
-                //     })
-                // }
-            });
+            .then(result=>{});
         setTimeout(() => {
             this.setState({open: false});
         }, 1500)
@@ -153,7 +157,12 @@ class User extends React.Component{
     render() {
         let inputs = <div>
             <div>
-                {this.state.picture}
+                {this.state.picture &&
+                <img src={this.state.picture} alt='avatar' style={{
+                    maxWidth:'200px',
+                    maxHeight:'200px'
+                }}/>
+                }
             </div>
             {this.Inputs('email',this.state.email)}
             {this.Inputs('name',this.state.name)}
@@ -175,12 +184,23 @@ class User extends React.Component{
         }
         return(
             <div>
+                <div>
+                    {!this.state.picture &&
+                    <div className={styles.roots}>
+                        <LinearProgress style={{backgroundColor:'#ffd432'}}/>
+                        <LinearProgress style={{backgroundColor:'#ffd432'}}/>
+                        <LinearProgress style={{backgroundColor:'#ffd432'}}/>
+                    </div>
+                    }
                 <Paper className={styles.root} style={PaperStyle}>
-                <h1 className="info">User information</h1>
-                <Grid container justify="center" alignItems="center" style={{width:'400px',margin:'0 auto'}}>
-                    {inputs}
-                </Grid>
+                    <div>
+                        <h1 className="info">User information</h1>
+                        <Grid container justify="center" alignItems="center" style={{width:'400px',margin:'0 auto'}}>
+                            {inputs}
+                        </Grid>
+                    </div>
                 </Paper>
+                </div>
             </div>
         )
     }

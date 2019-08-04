@@ -48,10 +48,12 @@ class Form extends React.Component{
             name:'',
             phone:'',
             date:'',
+            picture:'',
             visibility:true,
             incorrectPass:false,
             incorrectData:false,
             incorrectField:false,
+            hasPicture:true,
             exist:false,
             selectedFile:'',
             hasToken:!!token,
@@ -66,12 +68,19 @@ class Form extends React.Component{
         this.nameChange = this.nameChange.bind(this);
         this.confirmChange = this.confirmChange.bind(this);
         this.isEqual = this.isEqual.bind(this);
+        this.uploadFile = this.uploadFile.bind(this);
     }
 
     isEqual(){
         return this.state.password === this.state.confirm
     }
 
+    uploadFile(event){
+        let files = event.target.files[0];
+        this.setState({
+            picture : files
+        });
+    }
 
 
     accessConfirm() {
@@ -116,38 +125,50 @@ class Form extends React.Component{
             })
         }
         else {
-            if(this.isEqual() && this.state.name && this.state.phone && this.state.date && this.state.email && this.state.password && this.state.name)
-            {
-                const data = {
-                    login:this.state.login,
-                    password:this.state.password,
-                    email:this.state.email,
-                    name:this.state.name,
-                    phone:this.state.phone,
-                    date:this.state.date,
-                };
+            if(this.isEqual() && this.state.name && this.state.phone && this.state.date && this.state.email && this.state.password && this.state.name) {
+                if (this.state.picture) {
+                    const data = {
+                        login: this.state.login,
+                        password: this.state.password,
+                        email: this.state.email,
+                        name: this.state.name,
+                        phone: this.state.phone,
+                        date: this.state.date,
+                    };
 
-
-                crud.register('/',data).then(result=>{
-                    switch (result.data) {
-                        case 'Incorrect data':
-                            this.setState({
-                                incorrectField:true
-                            });
-                            break;
-                        case 'Already exist':
-                            this.setState({
-                                exist:true
-                            });
-                            break;
-                        default:
-                            localStorage.setItem('token',result.data.token);
-                            localStorage.setItem('info',JSON.stringify(result.data.info));
-                            this.setState({hasToken:true});
-                            break;
-                    }
-                });
+                    let formData = new FormData();
+                    formData.append(`${this.state.login}`, this.state.picture);
+                    crud.register('/', data).then(result => {
+                        switch (result.data) {
+                            case 'Incorrect data':
+                                this.setState({
+                                    incorrectField: true
+                                });
+                                break;
+                            case 'Already exist':
+                                this.setState({
+                                    exist: true
+                                });
+                                break;
+                            default:
+                                const user = JSON.stringify(result.data.info);
+                                let formData = new FormData();
+                                formData.append('name', this.state.picture, JSON.parse(user).id);
+                                crud.uploadPic('/Picture', formData);
+                                localStorage.setItem('token', result.data.token);
+                                localStorage.setItem('info', user);
+                                this.setState({hasToken: true});
+                                break;
+                        }
+                    });
+                }
+                else {
+                    this.setState({
+                        hasPicture:false
+                    })
+                }
             }
+
             else {
                 this.setState({
                     incorrectField:true
@@ -173,6 +194,7 @@ class Form extends React.Component{
                 id="contained-button-file"
                 multiple
                 type="file"
+                onChange={this.uploadFile}
             />
             <label htmlFor="contained-button-file">
                 <Button variant="contained" component="span"
@@ -203,7 +225,8 @@ class Form extends React.Component{
                     <div style = {!this.state.visibility ? {display:'block'} : {display:'none'}}>{inputs}</div>
                     <p style={this.state.incorrectField ? {display:'block'} :{display:'none'}}>Incorrect field</p>
                     <p style={this.state.exist ? {display:'block'} :{display:'none'}}>User already exist.</p>
-                        {this.state.visibility &&
+                    <p style={this.state.hasPicture ?  {display:'none'} : {display:'block'}}>Upload picture</p>
+                    {this.state.visibility &&
                         <Fab  variant="extended" aria-label="Delete" className={classes.fab} style={styles} onClick={this.handleClick}>
                             Sign in
                         </Fab>

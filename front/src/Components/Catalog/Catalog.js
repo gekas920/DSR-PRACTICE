@@ -60,13 +60,6 @@ class MaterialTableDemo extends React.Component{
                 data:result.data,
             })
         })
-            .catch(err=>{
-                localStorage.removeItem('token');
-                localStorage.removeItem('info');
-                this.setState({
-                    hasToken:false
-                })
-            })
      }
 
     handleClickOpen = (event,rowData) => {

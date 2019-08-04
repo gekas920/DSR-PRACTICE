@@ -5,6 +5,7 @@ import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
 import * as crud from "../Requests/requests";
 import CustomizedSnackbars from "../User/SuccessSnack";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 
 const useStyles = makeStyles(theme => ({
@@ -17,6 +18,9 @@ const useStyles = makeStyles(theme => ({
     textField: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
+    },
+    roots: {
+        flexGrow: 1,
     }
 }));
 
@@ -29,6 +33,7 @@ const butt = {
 
 const InputStyle ={
     minWidth: '300px',
+    marginLeft: '5px'
 };
 
 
@@ -44,6 +49,7 @@ class TakeEquip extends React.Component{
             lastOwner:props.content.lastOwner,
             description:props.content.description,
             admin:props.admin,
+            picture:'',
             open:false,
             done:false,
             value:props.content.name,
@@ -78,6 +84,24 @@ class TakeEquip extends React.Component{
                 incorrect:true
             });
         }
+    }
+
+    componentDidMount() {
+        crud.get(`/getEquipPicture/${this.state.name}`,{ responseType: 'arraybuffer' })
+            .then(result=>{
+                try {
+                    const base64 = btoa(
+                        new Uint8Array(result.data).reduce(
+                            (data, byte) => data + String.fromCharCode(byte),
+                            '',
+                        ),
+                    );
+                    this.setState({ picture: "data:;base64," + base64 });
+                }
+                catch (e) {
+                    this.setState({picture:''});
+                }
+            })
     }
 
     handleChange = name => event => {
@@ -180,8 +204,21 @@ class TakeEquip extends React.Component{
             />
         </div>;
         return(
-            <div className="diag">
+            <div className="diag" >
+                {!this.state.picture &&
+                <div className={useStyles.roots}>
+                    <LinearProgress style={{backgroundColor:'#ffd432'}}/>
+                    <LinearProgress style={{backgroundColor:'#ffd432'}}/>
+                    <LinearProgress style={{backgroundColor:'#ffd432'}}/>
+                </div>
+                }
                 <h1 className='name'>Equip info</h1>
+                {this.state.picture &&
+                <img src={this.state.picture} alt='equip' style={{
+                    maxWidth: '200px',
+                    maxHeight: '200px'
+                }}/>
+                }
                 {fields}
                 {this.state.incorrect &&
                 <p style={{color:'black'}}>Empty field</p>

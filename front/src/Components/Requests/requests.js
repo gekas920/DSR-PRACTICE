@@ -1,9 +1,18 @@
 import {instance} from "../MAIN/Main";
+import axios from 'axios'
 
 export const securedApi = '/api';
 
 
+instance.interceptors.response.use(function (res) {
+    return res;
+},function (error) {
+    if(error.response.status === 457){
+            window.location = '/';
+            localStorage.clear();
 
+    }
+});
 
  export function create(url,body,config) {
      const token = localStorage.getItem('token');
@@ -39,7 +48,8 @@ export const securedApi = '/api';
      const token = localStorage.getItem('token');
      const defConf = {headers: {
              'Authorization': token ? token : ''
-         }};
+         }
+     };
      let exp = await instance.get(securedApi+url,Object.assign({},config,defConf))
         .then(function (response) {
             return response
@@ -82,6 +92,15 @@ export function register(url,body,config) {
             return error
         });
     return cnt;
+}
+
+export function uploadPic(url,body) {
+    const contentType = {
+        headers:{
+            "content-type":"multipart/form-data"
+        }
+    };
+    axios.post(url, body, contentType).then(r  =>{});
 }
 
 

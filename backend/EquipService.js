@@ -21,6 +21,7 @@ function ShowAllEquip(response) {
                 description: elem.dataValues.description
             }
         });
+        response.status(200);
         response.send(arr);
     })
 
@@ -41,7 +42,7 @@ function CreateEquip(body,response){
             response.send('Already Exist');
         }
         else {
-            response.send('OK');
+            response.send(body.name);
         }
     });
 }

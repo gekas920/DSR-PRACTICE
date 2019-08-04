@@ -4,6 +4,8 @@ import CustomizedSnackbars from "../User/SuccessSnack";
 import {makeStyles} from "@material-ui/core";
 import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 
 const useStyles = makeStyles(theme => ({
     fab: {
@@ -38,6 +40,7 @@ class GiveBack extends React.Component{
             UserId:this.props.info.UserId,
             name:this.props.info.name,
             description:this.props.info.description,
+            picture:'',
             open:false,
             done:false,
         };
@@ -46,6 +49,23 @@ class GiveBack extends React.Component{
     }
 
 
+    componentDidMount() {
+        crud.get(`/getEquipPicture/${this.state.name}`,{ responseType: 'arraybuffer' })
+            .then(result=>{
+                try {
+                    const base64 = btoa(
+                        new Uint8Array(result.data).reduce(
+                            (data, byte) => data + String.fromCharCode(byte),
+                            '',
+                        ),
+                    );
+                    this.setState({ picture: "data:;base64," + base64 });
+                }
+                catch (e) {
+                    this.setState({picture:''});
+                }
+            })
+    }
 
     handleChange = name => event => {
         this.setState({
@@ -101,8 +121,21 @@ class GiveBack extends React.Component{
             />
         </div>;
         return(
-            <div className="diag">
+            <div className="diag1">
+                {!this.state.picture &&
+                <div className={useStyles.roots}>
+                    <LinearProgress style={{backgroundColor:'#ffd432'}}/>
+                    <LinearProgress style={{backgroundColor:'#ffd432'}}/>
+                    <LinearProgress style={{backgroundColor:'#ffd432'}}/>
+                </div>
+                }
                 <h1 className='name'>Equip info</h1>
+                {this.state.picture &&
+                <img src={this.state.picture} alt='equip' style={{
+                    maxWidth: '200px',
+                    maxHeight: '200px'
+                }}/>
+                }
                 {fields}
                 <Fab  onClick={this.giveBack}
                       disabled={this.state.done}
